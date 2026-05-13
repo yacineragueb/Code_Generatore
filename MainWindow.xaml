@@ -5,8 +5,148 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Code_Generatore"
         mc:Ignorable="d"
-        Title="Code generatore" Height="450" Width="800">
-    <Grid>
+        Title="Code generator" Height="450" Width="780">
+    <DockPanel>
 
-    </Grid>
+        <!-- Left Side -->
+        <Grid DockPanel.Dock="Left" Width="300" Background="#4895ef">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <Image Grid.Row="0"
+                   Width="200"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Source="/Images/Logo-white.png" />   
+
+            <Label Grid.Row="1" Foreground="White" Content="Version 1.0.0" HorizontalAlignment="Center" FontSize="16" FontFamily="./Fonts/#Poppins" FontWeight="DemiBold" Margin="0,0,0,20" />
+        </Grid>
+
+
+        <!-- Right Side --> 
+        <StackPanel DockPanel.Dock="Right">
+            <TextBlock Text="Please enter your SQL Server username and password to establish a connection."
+                       Foreground="Gray"
+                       FontSize="13"
+                       FontFamily="{StaticResource PoppinsFont}"
+                       TextWrapping="Wrap"
+                       Margin="5"/>
+
+            <Grid Height="400" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" >
+                    <Label Content="Username:"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#4895ef"
+                           FontFamily="{StaticResource PoppinsFont}" />
+                    <TextBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" >
+                    <Label Content="Password:"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#4895ef"
+                           FontFamily="{StaticResource PoppinsFont}" />
+                    <PasswordBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" />
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <CheckBox Grid.Column="0"
+                                  Content="Show Password"
+                                  FontFamily="{StaticResource PoppinsFont}"
+                                  HorizontalAlignment="Left"
+                                  Foreground="#4895ef" BorderBrush="#FF4895EF"/>
+
+                        
+                        <CheckBox Grid.Column="1"
+                                  Content="Remember me"
+                                  FontFamily="{StaticResource PoppinsFont}"
+                                  HorizontalAlignment="Right" 
+                                  IsChecked="True"
+                                  Foreground="#4895ef" BorderBrush="#FF4895EF"/>
+                    </Grid>
+                </StackPanel>
+
+                <Button Grid.Row="2"
+                        Margin="5"
+                        Height="50"
+                        Content="Connect"
+                        Cursor="Hand"
+                        FontFamily="{StaticResource PoppinsFont}"
+                        FontSize="16"
+                        FontWeight="DemiBold">
+
+                    <Button.Style>
+                        <Style TargetType="Button">
+
+                            <Setter Property="Background" Value="#4895ef"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderBrush" Value="#4895ef"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="4">
+
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+
+                                            <!-- Hover -->
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border"
+                                                        Property="Background"
+                                                        Value="#5fa3f1"/>
+                                                <Setter TargetName="border"
+                                                        Property="BorderBrush"
+                                                        Value="#5fa3f1"/>
+                                            </Trigger>
+
+                                            <!-- Pressed -->
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border"
+                                                        Property="Background"
+                                                        Value="#2f66b0"/>
+                                            </Trigger>
+
+                                            <!-- Disabled -->
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="border"
+                                                        Property="Background"
+                                                        Value="#B0B0B0"/>
+                                            </Trigger>
+
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </Grid>
+        </StackPanel>
+    </DockPanel>
 </Window>

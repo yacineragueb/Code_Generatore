@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Code_Generatore"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="PoppinsFont">./Fonts/#Poppins</FontFamily>
     </Application.Resources>
 </Application>
