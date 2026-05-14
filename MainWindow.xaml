@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Code_Generatore"
         mc:Ignorable="d"
-        Title="Code generator" Height="450" Width="780">
+        Title="Code generator" Height="450" Width="760"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
     <DockPanel>
 
         <!-- Left Side -->
@@ -48,7 +50,7 @@
                            FontWeight="SemiBold"
                            Foreground="#4895ef"
                            FontFamily="{StaticResource PoppinsFont}" />
-                    <TextBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" />
+                    <TextBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" BorderBrush="#4895ef" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" >
@@ -57,7 +59,7 @@
                            FontWeight="SemiBold"
                            Foreground="#4895ef"
                            FontFamily="{StaticResource PoppinsFont}" />
-                    <PasswordBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" />
+                    <PasswordBox Padding="4" Margin="5" FontSize="16" FontFamily="{StaticResource PoppinsFont}" RenderTransformOrigin="0,-4" BorderBrush="#4895ef" />
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -134,7 +136,7 @@
                                             <Trigger Property="IsEnabled" Value="False">
                                                 <Setter TargetName="border"
                                                         Property="Background"
-                                                        Value="#B0B0B0"/>
+                                                        Value="#bde0fe"/>
                                             </Trigger>
 
                                         </ControlTemplate.Triggers>
@@ -145,7 +147,6 @@
                         </Style>
                     </Button.Style>
                 </Button>
-
             </Grid>
         </StackPanel>
     </DockPanel>
