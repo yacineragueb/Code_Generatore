@@ -31,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Fonts\Poppins-Black.ttf" />
     <Resource Include="Fonts\Poppins-BlackItalic.ttf" />
     <Resource Include="Fonts\Poppins-Bold.ttf" />
