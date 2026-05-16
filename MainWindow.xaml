@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Code_Generatore"
         mc:Ignorable="d"
-        Title="Code generator" Height="400" Width="760"
+        Title="Code generator" Height="400" Width="740"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <DockPanel>
 

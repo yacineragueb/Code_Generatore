@@ -41,8 +41,14 @@ namespace Code_Generatore
         private void ConnectBtn_Click(object sender, RoutedEventArgs e)
         {
             string Username = UsernameTextBox.Text;
-            string Passowrd = PasswordBox.Password;
-
+            string Passowrd;
+            if (PasswordUnmaskTextBox.Visibility == Visibility.Visible)
+            {
+                Passowrd = PasswordUnmaskTextBox.Text;
+            } else
+            {
+                Passowrd = PasswordBox.Password;
+            }
 
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Passowrd))
             {
@@ -68,7 +74,14 @@ namespace Code_Generatore
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    MessageBox.Show("Connection successful!");
+                    windCode_gen windCode_Gen = new windCode_gen(this);
+                    this.Hide();
+                    windCode_Gen.ShowDialog();
+
+                    // TODO: Add check for remember me later.
+                    ShowPasswordCheckbox.IsChecked = false;
+                    UsernameTextBox.Clear();
+                    PasswordBox.Clear();
                 }
             }
             catch (Exception ex)
