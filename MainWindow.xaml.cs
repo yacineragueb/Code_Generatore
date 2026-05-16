@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Code_Generatore.Lib;
 using Microsoft.Data.SqlClient;
 
 namespace Code_Generatore
@@ -42,6 +43,8 @@ namespace Code_Generatore
         {
             string Username = UsernameTextBox.Text;
             string Passowrd;
+            bool isRememberMeChecked = RememberMeCheckbox.IsChecked == true;
+
             if (PasswordUnmaskTextBox.Visibility == Visibility.Visible)
             {
                 Passowrd = PasswordUnmaskTextBox.Text;
@@ -58,6 +61,14 @@ namespace Code_Generatore
             }
 
             ErrorText.Visibility = Visibility.Collapsed;
+
+            if(isRememberMeChecked)
+            {
+                Utility.SaveCredentials(Username, Passowrd);
+            } else
+            {
+                Utility.ClearCredentials();
+            }
 
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder
             {
@@ -78,15 +89,30 @@ namespace Code_Generatore
                     this.Hide();
                     windCode_Gen.ShowDialog();
 
-                    // TODO: Add check for remember me later.
-                    ShowPasswordCheckbox.IsChecked = false;
-                    UsernameTextBox.Clear();
-                    PasswordBox.Clear();
+                    if(!isRememberMeChecked)
+                    {
+                        ShowPasswordCheckbox.IsChecked = false;
+                        UsernameTextBox.Clear();
+                        PasswordBox.Clear();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Connection failed: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var credentials = Utility.LoadCredentials();
+
+            if(credentials != null)
+            {
+                UsernameTextBox.Text = credentials.Value.Username;
+                PasswordBox.Password = credentials.Value.Password;
+
+                RememberMeCheckbox.IsChecked = true;
             }
         }
     }

@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Code_Generatore"
         mc:Ignorable="d"
         Title="Code generator" Height="400" Width="740"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Loaded="Window_Loaded">
     <DockPanel>
 
         <!-- #region Left Side -->
