@@ -39,42 +39,45 @@ namespace Code_Generatore
             PasswordBox.Visibility = Visibility.Visible;
         }
 
+        private string GetPassword()
+        {
+            return PasswordUnmaskTextBox.Visibility == Visibility.Visible 
+                ? PasswordUnmaskTextBox.Text 
+                : PasswordBox.Password;
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorText.Text = message;
+            ErrorText.Visibility = Visibility.Visible;
+        }
+
+        private void HideError()
+        {
+            ErrorText.Text = string.Empty;
+            ErrorText.Visibility = Visibility.Collapsed;
+        }
+
         private void ConnectBtn_Click(object sender, RoutedEventArgs e)
         {
             string Username = UsernameTextBox.Text;
-            string Passowrd;
+            string Password = GetPassword();
             bool isRememberMeChecked = RememberMeCheckbox.IsChecked == true;
 
-            if (PasswordUnmaskTextBox.Visibility == Visibility.Visible)
+            if(!Utility.AreCredentialsProvided(Username, Password))
             {
-                Passowrd = PasswordUnmaskTextBox.Text;
-            } else
-            {
-                Passowrd = PasswordBox.Password;
-            }
-
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Passowrd))
-            {
-                ErrorText.Text = "Username and Password are required.";
-                ErrorText.Visibility = Visibility.Visible;
+                string errorMessage = "Username and Password are required.";
+                ShowError(errorMessage);
                 return;
             }
 
-            ErrorText.Visibility = Visibility.Collapsed;
-
-            if(isRememberMeChecked)
-            {
-                Utility.SaveCredentials(Username, Passowrd);
-            } else
-            {
-                Utility.ClearCredentials();
-            }
+            HideError();
 
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder
             {
                 DataSource = _server,
                 UserID = Username,
-                Password = Passowrd,
+                Password = Password,
                 TrustServerCertificate = true
             };
 
@@ -85,13 +88,24 @@ namespace Code_Generatore
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
+
+                    if (isRememberMeChecked)
+                    {
+                        Utility.SaveCredentials(Username, Password);
+                    }
+                    else
+                    {
+                        Utility.ClearCredentials();
+                    }
+
                     windCode_gen windCode_Gen = new windCode_gen(this);
                     this.Hide();
                     windCode_Gen.ShowDialog();
 
-                    if(!isRememberMeChecked)
+                    ShowPasswordCheckbox.IsChecked = false;
+
+                    if (!isRememberMeChecked)
                     {
-                        ShowPasswordCheckbox.IsChecked = false;
                         UsernameTextBox.Clear();
                         PasswordBox.Clear();
                     }
@@ -99,7 +113,11 @@ namespace Code_Generatore
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Connection failed: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Connection failed:\n" + ex.Message,
+                    "SQL Server Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
