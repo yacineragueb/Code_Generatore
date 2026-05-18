@@ -1,13 +1,5 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Code_Generatore.Lib;
 using Microsoft.Data.SqlClient;
 
@@ -98,7 +90,7 @@ namespace Code_Generatore
                         Utility.ClearCredentials();
                     }
 
-                    windCode_gen windCode_Gen = new windCode_gen(this);
+                    CodeGeneratoreWindow windCode_Gen = new CodeGeneratoreWindow(this);
                     this.Hide();
                     windCode_Gen.ShowDialog();
 

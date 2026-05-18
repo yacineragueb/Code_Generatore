@@ -1,0 +1,126 @@
+﻿<Window x:Class="Code_Generatore.CodeGeneratoreWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Code_Generatore"
+        mc:Ignorable="d"
+        Title="Code generatore" MinHeight="450" Height="450" Width="800" MinWidth="800"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        Closed="Window_Closed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"  />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"  />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <!--#region Left Side-->
+
+        <Grid Grid.Column="0" Grid.Row="0" Background="{StaticResource PrimaryBrush}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" >
+                <Label Content="Choose your database:" Foreground="White" />
+                <ComboBox >
+                    <ComboBoxItem IsSelected="True" Content="C#"/>
+                    <ComboBoxItem Content="WPF"/>
+                    <ComboBoxItem Content="SQL Server"/>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" >
+                <Label Content="Enter your project name:" Foreground="White" />
+                <TextBox d:Text="CodeGeneratore" FontSize="{StaticResource FontSizeSmall}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2">
+                <Label Content="Output folder:" Foreground="White" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="OutputFolderTextBox" d:Text="C:/Desktop" FontSize="{StaticResource FontSizeSmall}" Grid.Column="0" />
+
+                    <Button x:Name="BrowseBtn" Grid.Column="1"
+                            Style="{StaticResource InputStyle}"
+                            Background="White"
+                            Content="Browse…"
+                            Margin="0,5,5,5"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            Cursor="Hand"
+                            Click="BrowseBtn_Click"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+        
+        <!--#endregion-->
+
+        <!-- #region Right Top Side -->
+
+        <Grid Height="100" VerticalAlignment="Top" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Background="{StaticResource PrimaryBrush}" Margin="{StaticResource MarginSize}" Padding="{StaticResource PaddingSizeSmall}" FontFamily="{StaticResource PoppinsFont}" Foreground="White" Grid.Row="0" Text="General Information" />
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0" >
+                    <Label Content="Server: " FontSize="{StaticResource FontSizeSmall}" />
+                    <Label Content="Localhost" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal"  >
+                    <Label Grid.Column="1" Content="User: " FontSize="{StaticResource FontSizeSmall}" />
+                    <Label Content="Username" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal"  >
+                    <Label Content="Status: " FontSize="{StaticResource FontSizeSmall}" />
+                    <Label Content="Connected" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,5,0" >
+                    <Label Content="Database: " FontSize="{StaticResource FontSizeSmall}"  />
+                    <Label Content="Not Selcted Yet" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        
+        <!-- #endregion -->
+        
+        <!--#region Bottom Side-->
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="{StaticResource PrimaryBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="CurrentDateTimeTextBlock" Grid.Column="0" Foreground="White" FontWeight="Normal" FontSize="14" VerticalAlignment="Center" Margin="5" d:Content="18 May, 2026 - 13:56:20" />
+
+            <Button Click="DisconnectBtn_Click" Grid.Column="1" Style="{StaticResource DangerBtn}" Content="Disconnect" HorizontalAlignment="Right" />
+        </Grid>
+        
+        <!--#endregion-->
+        
+    </Grid>
+</Window>
