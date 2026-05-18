@@ -55,7 +55,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Foreground="White" FontWeight="Normal" FontSize="14" VerticalAlignment="Center" Margin="5" Content="Date: 16/05/2026" />
+            <Label x:Name="CurrentDateTimeTextBlock" Grid.Column="0" Foreground="White" FontWeight="Normal" FontSize="14" VerticalAlignment="Center" Margin="5" d:Content="18 May, 2026 - 13:56:20" />
 
             <Button Grid.Column="1" Style="{StaticResource DangerBtn}" Content="Disconnect" HorizontalAlignment="Right" />
         </Grid>
