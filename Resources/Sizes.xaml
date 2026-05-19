@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--#region Sizes-->
+
+    <!-- Font sizes -->
+    <sys:Double x:Key="FontSizeSmall">12</sys:Double>
+    <sys:Double x:Key="FontSizeNormal">14</sys:Double>
+    <sys:Double x:Key="FontSizeLarge">16</sys:Double>
+
+    <!-- Control sizes -->
+    <sys:Double x:Key="ControlHeight">34</sys:Double>
+
+    <!-- Margin sizes -->
+    <Thickness x:Key="MarginSize">5</Thickness>
+
+    <!-- Padding sizes -->
+    <Thickness x:Key="PaddingSizeSmall">5</Thickness>
+    <Thickness x:Key="PaddingSizeMedium">10</Thickness>
+
+    <!--#endregion-->
+
+</ResourceDictionary>

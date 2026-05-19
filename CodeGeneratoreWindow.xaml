@@ -4,11 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Code_Generatore"
+        xmlns:userControl="clr-namespace:Code_Generatore.Controls"
         mc:Ignorable="d"
         Title="Code generatore" MinHeight="450" Height="450" Width="800" MinWidth="800"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed">
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"  />
@@ -33,9 +35,9 @@
             <StackPanel Grid.Row="0" >
                 <Label Content="Choose your database:" Foreground="White" />
                 <ComboBox >
-                    <ComboBoxItem IsSelected="True" Content="C#"/>
-                    <ComboBoxItem Content="WPF"/>
-                    <ComboBoxItem Content="SQL Server"/>
+                    <ComboBoxItem IsSelected="True" Content="e-commarce"/>
+                    <ComboBoxItem Content="DVLD"/>
+                    <ComboBoxItem Content="EmployeesDB"/>
                 </ComboBox>
             </StackPanel>
 
@@ -70,43 +72,57 @@
         <!--#endregion-->
 
         <!-- #region Right Top Side -->
+        
+        <Border Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2"
+                VerticalAlignment="Top"
+                Margin="{StaticResource MarginSize}"
+                BorderBrush="{StaticResource PrimaryBrush}"
+                BorderThickness="1">
 
-        <Grid Height="100" VerticalAlignment="Top" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Background="{StaticResource PrimaryBrush}" Margin="{StaticResource MarginSize}" Padding="{StaticResource PaddingSizeSmall}" FontFamily="{StaticResource PoppinsFont}" Foreground="White" Grid.Row="0" Text="General Information" />
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <!-- Header -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource PrimaryBrush}"
+                        Padding="{StaticResource PaddingSizeSmall}">
+                    
+                    <TextBlock Text="General information"
+                       Foreground="White"
+                       FontFamily="{StaticResource PoppinsFont}"
+                       FontSize="{StaticResource FontSizeSmall}"
+                       FontWeight="Normal"/>
+                </Border>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0" >
-                    <Label Content="Server: " FontSize="{StaticResource FontSizeSmall}" />
-                    <Label Content="Localhost" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
-                </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal"  >
-                    <Label Grid.Column="1" Content="User: " FontSize="{StaticResource FontSizeSmall}" />
-                    <Label Content="Username" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
-                </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal"  >
-                    <Label Content="Status: " FontSize="{StaticResource FontSizeSmall}" />
-                    <Label Content="Connected" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
-                </StackPanel>
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,5,0" >
-                    <Label Content="Database: " FontSize="{StaticResource FontSizeSmall}"  />
-                    <Label Content="Not Selcted Yet" FontWeight="Normal" Foreground="Black" FontSize="{StaticResource FontSizeSmall}" />
-                </StackPanel>
+                <!-- Info Row -->
+                <Grid Grid.Row="1" Margin="{StaticResource MarginSize}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Server -->
+                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="Localhost" />
+
+                    <!-- Username -->
+                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="sa" />
+
+                    <!-- Status -->
+                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="Connected" />
+
+                    <!-- Database -->
+                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="Not Chosen Yet" />
+                </Grid>
             </Grid>
-        </Grid>
+        </Border>
         
         <!-- #endregion -->
-        
+
         <!--#region Bottom Side-->
         
         <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="{StaticResource PrimaryBrush}">

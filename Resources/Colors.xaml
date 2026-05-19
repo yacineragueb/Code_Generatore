@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- #region Colors -->
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#4895EF"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="#ff002b"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#5FA3F1"/>
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="#ff4d6b"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#2F66B0"/>
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="#b3001e"/>
+    <SolidColorBrush x:Key="PrimaryDisabledBrush" Color="#BDE0FE"/>
+    <SolidColorBrush x:Key="DangerDisabledBrush" Color="#ff9aab"/>
+
+    <!-- #endregion -->
+    
+</ResourceDictionary>
