@@ -34,11 +34,9 @@
 
             <StackPanel Grid.Row="0" >
                 <Label Content="Choose your database:" Foreground="White" />
-                <ComboBox >
-                    <ComboBoxItem IsSelected="True" Content="e-commarce"/>
-                    <ComboBoxItem Content="DVLD"/>
-                    <ComboBoxItem Content="EmployeesDB"/>
-                </ComboBox>
+                <ComboBox x:Name="DatabasesComboBox" 
+                          ItemsSource="{Binding DatabasesList}" 
+                          SelectedItem="{Binding SelectedDatabase, Mode=TwoWay}" />
             </StackPanel>
 
             <StackPanel Grid.Row="1" >
@@ -107,16 +105,16 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Server -->
-                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="{Binding ServerName}" />
+                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="{Binding Session.ServerName}" />
 
                     <!-- Username -->
-                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="{Binding UserName}" />
+                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="{Binding Session.UserName}" />
 
                     <!-- Status -->
-                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding ConnectionStatus}" />
+                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding Session.ConnectionStatus}" />
 
                     <!-- Database -->
-                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding DatabaseName}" />
+                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding Session.DatabaseName}" />
                 </Grid>
             </Grid>
         </Border>
