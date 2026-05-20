@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using Code_Generatore.Lib;
 using Microsoft.Data.SqlClient;
+using Code_Generatore.BusinessLayer;
 
 namespace Code_Generatore
 {
@@ -10,8 +11,6 @@ namespace Code_Generatore
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly string _server = "localhost";
-        private string _connectionString;
         public MainWindow()
         {
             InitializeComponent();
@@ -65,43 +64,33 @@ namespace Code_Generatore
 
             HideError();
 
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder
-            {
-                DataSource = _server,
-                UserID = Username,
-                Password = Password,
-                TrustServerCertificate = true
-            };
-
-            _connectionString = builder.ConnectionString;
-
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                DatabaseService databaseService = new DatabaseService();
+                ConnectionSession session = databaseService.Login(Username, Password);
+
+                if (isRememberMeChecked)
                 {
-                    conn.Open();
-
-                    if (isRememberMeChecked)
-                    {
-                        Utility.SaveCredentials(Username, Password);
-                    }
-                    else
-                    {
-                        Utility.ClearCredentials();
-                    }
-
-                    CodeGeneratoreWindow windCode_Gen = new CodeGeneratoreWindow(this);
-                    this.Hide();
-                    windCode_Gen.ShowDialog();
-
-                    ShowPasswordCheckbox.IsChecked = false;
-
-                    if (!isRememberMeChecked)
-                    {
-                        UsernameTextBox.Clear();
-                        PasswordBox.Clear();
-                    }
+                    Utility.SaveCredentials(Username, Password);
                 }
+                else
+                {
+                    Utility.ClearCredentials();
+                }
+
+                CodeGeneratoreWindow windCode_Gen = new CodeGeneratoreWindow(session);
+                this.Hide();
+                windCode_Gen.ShowDialog();
+
+                ShowPasswordCheckbox.IsChecked = false;
+
+                if (!isRememberMeChecked)
+                {
+                    UsernameTextBox.Clear();
+                    PasswordBox.Clear();
+                }
+
+                this.Show();
             }
             catch (Exception ex)
             {

@@ -36,6 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Code_Generatore.BusinessLayer\Code_Generatore.BusinessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Fonts\Poppins-Black.ttf" />
     <Resource Include="Resources\Fonts\Poppins-BlackItalic.ttf" />
     <Resource Include="Resources\Fonts\Poppins-Bold.ttf" />

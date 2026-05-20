@@ -107,16 +107,16 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Server -->
-                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="Localhost" />
+                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="{Binding ServerName}" />
 
                     <!-- Username -->
-                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="sa" />
+                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="{Binding UserName}" />
 
                     <!-- Status -->
-                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="Connected" />
+                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding ConnectionStatus}" />
 
                     <!-- Database -->
-                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="Not Chosen Yet" />
+                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding DatabaseName}" />
                 </Grid>
             </Grid>
         </Border>

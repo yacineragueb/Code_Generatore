@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Threading;
+using Code_Generatore.BusinessLayer;
 
 namespace Code_Generatore
 {
@@ -9,7 +10,7 @@ namespace Code_Generatore
     /// </summary>
     public partial class CodeGeneratoreWindow : Window
     {
-        private readonly MainWindow _loginWindow;
+        private ConnectionSession _session;
         private DispatcherTimer? _timer;
 
         private void StartLiveClock()
@@ -24,10 +25,12 @@ namespace Code_Generatore
             _timer.Start();
         }
 
-        public CodeGeneratoreWindow(MainWindow loginWindow)
+        public CodeGeneratoreWindow(ConnectionSession Session)
         {
             InitializeComponent();
-            _loginWindow = loginWindow;
+
+            _session = Session;
+            this.DataContext = _session;
 
             StartLiveClock();
         }
@@ -40,7 +43,6 @@ namespace Code_Generatore
         private void Window_Closed(object sender, EventArgs e)
         {
             _timer?.Stop();
-            _loginWindow.Show();
         }
 
         private void DisconnectBtn_Click(object sender, RoutedEventArgs e)
