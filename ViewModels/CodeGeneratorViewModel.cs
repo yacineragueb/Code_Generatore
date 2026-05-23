@@ -1,6 +1,5 @@
 ﻿using Code_Generatore.BusinessLayer;
 using System.ComponentModel;
-using System.Windows.Input;
 
 namespace Code_Generatore.ViewModels
 {

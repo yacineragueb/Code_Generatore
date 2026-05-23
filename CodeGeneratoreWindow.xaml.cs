@@ -1,7 +1,6 @@
 ﻿using Code_Generatore.BusinessLayer;
 using Code_Generatore.ViewModels;
 using Microsoft.Win32;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Threading;
 
