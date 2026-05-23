@@ -7,6 +7,7 @@ namespace Code_Generatore.ViewModels
     public class CodeGeneratorViewModel : INotifyPropertyChanged
     {
         private readonly ConnectionSession _session;
+        private DatabaseService _databaseService;
         private string _selectedDatabase = "Not Selected Yet";
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
@@ -43,8 +44,8 @@ namespace Code_Generatore.ViewModels
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
-
-            DatabasesList = DatabaseService.GetAllDatabases(_session);
+            _databaseService = new DatabaseService();
+            DatabasesList = _databaseService.GetAllDatabases(_session);
         }
 
         public void OnPropertyChanged(string name)

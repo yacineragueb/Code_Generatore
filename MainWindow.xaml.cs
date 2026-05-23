@@ -66,7 +66,8 @@ namespace Code_Generatore
 
             try
             {
-                ConnectionSession session = DatabaseService.Login(Username, Password);
+                DatabaseService dbService = new DatabaseService();
+                ConnectionSession session = dbService.Login(Username, Password);
 
                 if (isRememberMeChecked)
                 {
