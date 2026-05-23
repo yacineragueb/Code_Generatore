@@ -79,7 +79,8 @@
                            Foreground="Red" 
                            Margin="5" 
                            FontFamily="{StaticResource PoppinsFont}"
-                           Visibility="Collapsed" />
+                           Visibility="Collapsed"
+                           TextWrapping="Wrap"/>
 
                 <Button Grid.Row="3"
                         Style="{StaticResource PrimaryBtn}"

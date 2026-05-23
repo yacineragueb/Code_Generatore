@@ -1,4 +1,5 @@
 ﻿using Code_Generatore.BusinessLayer;
+using Code_Generatore.ViewModels;
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.Windows;
@@ -9,38 +10,10 @@ namespace Code_Generatore
     /// <summary>
     /// Interaction logic for CodeGeneratoreWindow.xaml
     /// </summary>
-    public partial class CodeGeneratoreWindow : Window, INotifyPropertyChanged
+    public partial class CodeGeneratoreWindow : Window
     {
-        private ConnectionSession _session;
+        private readonly CodeGeneratorViewModel _viewModel;
         private DispatcherTimer? _timer;
-
-        public List<string> DatabasesList { get; set; }
-        public ConnectionSession Session => _session;
-
-        private string _selectedDatabase;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public string SelectedDatabase
-        {
-            get => _selectedDatabase;
-            set
-            {
-                _selectedDatabase = value;
-
-                // update session
-                _session.DatabaseName = value;
-
-                // force UI refresh
-                OnPropertyChanged(nameof(SelectedDatabase));
-                OnPropertyChanged(nameof(Session));
-            }
-        }
 
         private void StartLiveClock()
         {
@@ -58,13 +31,9 @@ namespace Code_Generatore
         {
             InitializeComponent();
 
-            _session = Session;
-
+            _viewModel = new CodeGeneratorViewModel(Session);
+            this.DataContext = _viewModel;
             StartLiveClock();
-
-            DatabasesList = DatabaseService.GetAllDatabases(_session);
-
-            this.DataContext = this;
         }
 
         private void UpdateClock()

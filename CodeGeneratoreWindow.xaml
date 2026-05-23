@@ -114,7 +114,7 @@
                     <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding Session.ConnectionStatus}" />
 
                     <!-- Database -->
-                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding Session.DatabaseName}" />
+                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding SelectedDatabase}" />
                 </Grid>
             </Grid>
         </Border>

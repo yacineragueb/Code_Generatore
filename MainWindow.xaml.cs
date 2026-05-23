@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using Code_Generatore.BusinessLayer;
+using Code_Generatore.BusinessLayer.Exceptions;
 using Code_Generatore.Lib;
-using Microsoft.Data.SqlClient;
-using Code_Generatore.BusinessLayer;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Code_Generatore
 {
@@ -91,11 +91,14 @@ namespace Code_Generatore
 
                 this.Show();
             }
+            catch (DatabaseConnectionException ex)
+            {
+                ShowError(ex.Message);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Connection failed:\n" + ex.Message,
-                    "SQL Server Error",
+                MessageBox.Show("An unexpected error occurred.\n" + ex.Message, 
+                    "Error", 
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
