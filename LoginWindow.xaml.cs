@@ -1,6 +1,5 @@
 ﻿using Code_Generatore.BusinessLayer;
-using Code_Generatore.BusinessLayer.Exceptions;
-using Code_Generatore.Lib;
+using Code_Generatore.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,9 +10,18 @@ namespace Code_Generatore
     /// </summary>
     public partial class LoginWindow : Window
     {
+        private readonly LoginViewModel _viewModel;
         public LoginWindow()
         {
             InitializeComponent();
+
+            _viewModel = new LoginViewModel();
+
+            _viewModel.LoginSucceeded += OnLoginSucceeded;
+
+            this.DataContext = _viewModel;
+
+            PasswordBox.Password = _viewModel.Password;
         }
 
         private void ShowPasswordCheckbox_Checked(object sender, RoutedEventArgs e)
@@ -21,6 +29,8 @@ namespace Code_Generatore
             PasswordUnmaskTextBox.Text = PasswordBox.Password;
             PasswordUnmaskTextBox.Visibility = Visibility.Visible;
             PasswordBox.Visibility = Visibility.Collapsed;
+
+            _viewModel.Password = PasswordUnmaskTextBox.Text;
         }
 
         private void ShowPasswordCheckbox_Unchecked(object sender, RoutedEventArgs e)
@@ -28,94 +38,38 @@ namespace Code_Generatore
             PasswordBox.Password = PasswordUnmaskTextBox.Text;
             PasswordUnmaskTextBox.Visibility = Visibility.Collapsed;
             PasswordBox.Visibility = Visibility.Visible;
+
+            _viewModel.Password = PasswordBox.Password;
         }
 
-        private string GetPassword()
+        private void OnLoginSucceeded(ConnectionSession session)
         {
-            return PasswordUnmaskTextBox.Visibility == Visibility.Visible 
-                ? PasswordUnmaskTextBox.Text 
-                : PasswordBox.Password;
+            CodeGeneratoreWindow window =
+                new CodeGeneratoreWindow(session);
+
+            this.Hide();
+
+            window.ShowDialog();
+
+            ShowPasswordCheckbox.IsChecked = false;
+
+            if (!_viewModel.isRememberMeChecked())
+            {
+                UsernameTextBox.Clear();
+                PasswordBox.Clear();
+            }
+
+            this.Show();
         }
 
-        private void ShowError(string message)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            ErrorText.Text = message;
-            ErrorText.Visibility = Visibility.Visible;
+            _viewModel.Password = PasswordBox.Password;
         }
 
-        private void HideError()
+        private void PasswordUnmaskTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ErrorText.Text = string.Empty;
-            ErrorText.Visibility = Visibility.Collapsed;
-        }
-
-        private void ConnectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            string Username = UsernameTextBox.Text;
-            string Password = GetPassword();
-            bool isRememberMeChecked = RememberMeCheckbox.IsChecked == true;
-
-            if(!Utility.AreCredentialsProvided(Username, Password))
-            {
-                string errorMessage = "Username and Password are required.";
-                ShowError(errorMessage);
-                return;
-            }
-
-            HideError();
-
-            try
-            {
-                DatabaseService dbService = new DatabaseService();
-                ConnectionSession session = dbService.Login(Username, Password);
-
-                if (isRememberMeChecked)
-                {
-                    Utility.SaveCredentials(Username, Password);
-                }
-                else
-                {
-                    Utility.ClearCredentials();
-                }
-
-                CodeGeneratoreWindow windCode_Gen = new CodeGeneratoreWindow(session);
-                this.Hide();
-                windCode_Gen.ShowDialog();
-
-                ShowPasswordCheckbox.IsChecked = false;
-
-                if (!isRememberMeChecked)
-                {
-                    UsernameTextBox.Clear();
-                    PasswordBox.Clear();
-                }
-
-                this.Show();
-            }
-            catch (DatabaseConnectionException ex)
-            {
-                ShowError(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An unexpected error occurred.\n" + ex.Message, 
-                    "Error", 
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var credentials = Utility.LoadCredentials();
-
-            if(credentials != null)
-            {
-                UsernameTextBox.Text = credentials.Value.Username;
-                PasswordBox.Password = credentials.Value.Password;
-
-                RememberMeCheckbox.IsChecked = true;
-            }
+            _viewModel.Password = PasswordUnmaskTextBox.Text;
         }
     }
 }

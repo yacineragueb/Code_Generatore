@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Title="Code generator" Height="400" Width="740"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
-        Loaded="Window_Loaded">
+        >
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
     <DockPanel>
 
         <!-- #region Left Side -->
@@ -43,13 +48,13 @@
 
                 <StackPanel Grid.Row="0" >
                     <Label Content="Username:" />
-                    <TextBox x:Name="UsernameTextBox" />
+                    <TextBox x:Name="UsernameTextBox" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" >
                     <Label Content="Password:" />
-                    <PasswordBox x:Name="PasswordBox"/>
-                    <TextBox x:Name="PasswordUnmaskTextBox" Visibility="Collapsed"/>
+                    <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged"/>
+                    <TextBox x:Name="PasswordUnmaskTextBox" Visibility="Collapsed" TextChanged="PasswordUnmaskTextBox_TextChanged"/>
 
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
@@ -66,28 +71,23 @@
 
                         <CheckBox Grid.Column="1"
                                   Content="Remember me"
-                                  HorizontalAlignment="Right" 
-                                  IsChecked="True"
-                                  x:Name="RememberMeCheckbox"/>
+                                  HorizontalAlignment="Right"
+                                  IsChecked="{Binding RememberMe}"/>
                     </Grid>
                 </StackPanel>
 
-                <TextBlock Grid.Row="2" 
-                           x:Name="ErrorText"
+                <TextBlock Grid.Row="2"
                            d:Visibility="Visible"
                            d:Text="Username and Password are required."
-                           Foreground="Red" 
-                           Margin="5" 
-                           FontFamily="{StaticResource PoppinsFont}"
-                           Visibility="Collapsed"
-                           TextWrapping="Wrap"/>
+                           Text="{Binding ErrorMessage}"
+                           Style="{StaticResource ErrorMessageStyle}"
+                           Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <Button Grid.Row="3"
                         Style="{StaticResource PrimaryBtn}"
                         Content="Connect"
-                        x:Name="ConnectBtn"
-                        Click="ConnectBtn_Click">
-                </Button>
+                        Command="{Binding LoginCommand}" />
+
             </Grid>
         </StackPanel>
         <!--#endregion-->

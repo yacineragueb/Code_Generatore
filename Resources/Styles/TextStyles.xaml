@@ -33,6 +33,14 @@
         <Setter Property="Foreground" Value="Gray"/>
     </Style>
 
+    <Style x:Key="ErrorMessageStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}"/>
+        <Setter Property="Margin" Value="{StaticResource MarginSize}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="Red"/>
+    </Style>
+
     <!-- #endregion -->
 
 </ResourceDictionary>
