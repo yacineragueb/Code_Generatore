@@ -1,0 +1,65 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!--#region RadioButton Styles-->
+
+    <Style x:Key="ProjectTypeRadioStyle" TargetType="RadioButton">
+        <Setter Property="GroupName" Value="ProjectType"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="{StaticResource MarginSize}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="CardBorder"
+                        Background="White"
+                        BorderBrush="{StaticResource PrimaryHoverBrush}"
+                        BorderThickness="1"
+                        Padding="10,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <!-- Icon -->
+                                <ColumnDefinition Width="*"/>
+                                <!-- Content -->
+                                <ColumnDefinition Width="Auto"/>
+                                <!-- Radio dot -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon from Tag -->
+                            <Viewbox Width="18" Height="18" Margin="0,0,8,0">
+                                <Path Fill="{StaticResource PrimaryBrush}"
+                                      Stretch="Uniform"
+                                      Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Viewbox>
+
+                            <!-- Title + subtitle from Content -->
+                            <ContentPresenter Grid.Column="1" VerticalAlignment="Center"/>
+
+                            <!-- Radio dot -->
+                            <Ellipse x:Name="RadioDot"
+                                     Grid.Column="2"
+                                     Width="14" Height="14"
+                                     Stroke="{StaticResource PrimaryBrush}"
+                                     StrokeThickness="2"
+                                     Margin="8,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CardBorder" Property="BorderThickness" Value="2"/>
+                            <Setter TargetName="RadioDot" Property="Fill" 
+                                Value="{StaticResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="#E0EFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--#endregion-->
+    
+</ResourceDictionary>

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Code_Generatore"
         xmlns:userControl="clr-namespace:Code_Generatore.UserControls"
         mc:Ignorable="d"
-        Title="Code generatore" MinHeight="450" Height="450" Width="800" MinWidth="800"
+        Title="Code generatore" MinHeight="500" MinWidth="1000"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed">
@@ -29,9 +29,11 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!-- Database name selector -->
             <StackPanel Grid.Row="0" >
                 <Label Content="Choose your database:" Foreground="White" />
                 <ComboBox x:Name="DatabasesComboBox" 
@@ -39,11 +41,13 @@
                           SelectedItem="{Binding SelectedDatabase, Mode=TwoWay}" />
             </StackPanel>
 
+            <!-- Project name selector -->
             <StackPanel Grid.Row="1" >
                 <Label Content="Enter your project name:" Foreground="White" />
                 <TextBox d:Text="CodeGeneratore" FontSize="{StaticResource FontSizeSmall}" />
             </StackPanel>
 
+            <!-- Project output folder selector -->
             <StackPanel Grid.Row="2">
                 <Label Content="Output folder:" Foreground="White" />
 
@@ -64,6 +68,40 @@
                             Cursor="Hand"
                             Click="BrowseBtn_Click"/>
                 </Grid>
+            </StackPanel>
+
+            <!-- Project type selector -->
+            <StackPanel Grid.Row="3">
+                <Label Content="Project type:" Foreground="White" />
+                <UniformGrid Columns="2">
+
+                    <!-- WPF Option -->
+                    <RadioButton x:Name="WpfRadio"
+                                 IsChecked="True"
+                                 Style="{StaticResource ProjectTypeRadioStyle}"
+                                 Tag="M240-320h360v-200H240v200Zm420-120h60v-200H360v60h300v140ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z">
+                        <StackPanel>
+                            <TextBlock Text="WPF"
+                                       FontSize="{StaticResource FontSizeSmall}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Windows Presentation" FontSize="10" Foreground="Gray"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <!-- WinForms Option -->
+                    <RadioButton x:Name="WinFormsRadio"
+                                 Style="{StaticResource ProjectTypeRadioStyle}"
+                                 Tag="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Z">
+                        <StackPanel>
+                            <TextBlock Text="WinForms"
+                                       FontSize="{StaticResource FontSizeSmall}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Windows Forms" FontSize="10" Foreground="Gray"/>
+                        </StackPanel>
+                    </RadioButton>
+                </UniformGrid>
             </StackPanel>
         </Grid>
         

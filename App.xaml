@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="/Resources/Styles/InputStyles.xaml" />
                 <ResourceDictionary Source="/Resources/Styles/CheckboxStyles.xaml" />
                 <ResourceDictionary Source="/Resources/Styles/ComboBoxStyles.xaml" />
+                <ResourceDictionary Source="/Resources/Styles/RadioButtonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
