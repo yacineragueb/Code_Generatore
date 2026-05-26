@@ -1,5 +1,6 @@
 ﻿using Code_Generatore.BusinessLayer;
 using Code_Generatore.BusinessLayer.Exceptions;
+using Code_Generatore.ViewModels.Commands;
 using Code_Generatore.Lib;
 using System.ComponentModel;
 using System.Windows;
@@ -69,7 +70,7 @@ namespace Code_Generatore.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public Action<ConnectionSession>? LoginSucceeded { get; set; }
+        public event Action<ConnectionSession>? LoginSucceeded;
 
         public LoginViewModel()
         {
@@ -148,33 +149,6 @@ namespace Code_Generatore.ViewModels
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object?> _execute;
-        private readonly Predicate<object?>? _canExecute;
-
-        public event EventHandler? CanExecuteChanged;
-
-        public RelayCommand(
-            Action<object?> execute,
-            Predicate<object?>? canExecute = null)
-        {
-            _execute = execute;
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object? parameter)
-        {
-            return _canExecute == null
-                || _canExecute(parameter);
-        }
-
-        public void Execute(object? parameter)
-        {
-            _execute(parameter);
         }
     }
 }

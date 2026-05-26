@@ -38,7 +38,7 @@
                        Margin="5"
                        Style="{StaticResource DescriptionText}"/>
 
-            <Grid Height="Auto" >
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -48,7 +48,7 @@
 
                 <StackPanel Grid.Row="0" >
                     <Label Content="Username:" />
-                    <TextBox x:Name="UsernameTextBox" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox x:Name="UsernameTextBox" Text="{Binding Username}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" >
