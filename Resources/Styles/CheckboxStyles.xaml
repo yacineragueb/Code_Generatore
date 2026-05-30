@@ -9,6 +9,96 @@
         <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
     </Style>
 
-    <!-- #endregion -->
+    <!-- Base Checkbox Card for Arch. Layer Checkbox Style -->
+    <Style x:Key="ArchLayerCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="{StaticResource MarginSize}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Border x:Name="CardBorder"
+                        Background="White"
+                        Padding="14,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <!-- Checkbox -->
+                                <ColumnDefinition Width="*"/>
+                                <!-- Title + Subtitle -->
+                                <ColumnDefinition Width="Auto"/>
+                                <!-- Badge -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Custom Checkbox Box -->
+                            <Border x:Name="CheckBorder"
+                                Grid.Column="0"
+                                Width="18" Height="18"
+                                BorderBrush="{StaticResource PrimaryBrush}"
+                                BorderThickness="1"
+                                Background="Transparent"
+                                VerticalAlignment="Center"
+                                Margin="0,0,12,0">
+                                <Path x:Name="CheckMark"
+                                  Data="M 2,7 L 6,11 L 14,3"
+                                  Stroke="White"
+                                  StrokeThickness="2"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  Stretch="None"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Visibility="Collapsed"/>
+                            </Border>
+
+                            <!-- Title + subtitle -->
+                            <ContentPresenter Grid.Column="1" VerticalAlignment="Center"/>
+
+                            <!-- Badge -->
+                            <TextBlock x:Name="BadgeText"
+                                       Grid.Column="2"
+                                       Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource PrimaryBrush}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Checked State -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <!-- Hover State -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="#E0EFFF"/>
+                        </Trigger>
+                        <!-- Disabled State -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="CardBorder" Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- DAL Specific Style -->
+    <Style x:Key="DalCheckBoxStyle"
+       TargetType="CheckBox"
+       BasedOn="{StaticResource ArchLayerCheckBoxStyle}">
+        <Setter Property="Tag" Value="DAL"/>
+    </Style>
+
+    <!-- BLL Specific Style -->
+    <Style x:Key="BllCheckBoxStyle"
+       TargetType="CheckBox"
+       BasedOn="{StaticResource ArchLayerCheckBoxStyle}">
+        <Setter Property="Tag" Value="BLL"/>
+    </Style>
+
+    <!--#endregion-->
 
 </ResourceDictionary>

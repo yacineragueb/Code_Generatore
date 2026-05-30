@@ -9,7 +9,7 @@
         Title="Code generatore" MinHeight="500" MinWidth="1000"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
-        Closed="Window_Closed">
+        Closed="Window_Closed" Height="700">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -27,6 +27,7 @@
 
         <Grid Background="{StaticResource PrimaryBrush}" >
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -102,6 +103,40 @@
                         </StackPanel>
                     </RadioButton>
                 </UniformGrid>
+            </StackPanel>
+
+            <!-- Project Architecture selector -->
+            <StackPanel Grid.Row="4">
+                <Label Content="Architecture:" Foreground="White" />
+                <!-- DAL Card -->
+                <CheckBox Style="{StaticResource DalCheckBoxStyle}"
+                          IsChecked="True">
+                    <StackPanel>
+                        <TextBlock Text="Data Access Layer"
+                                   FontWeight="SemiBold"
+                                   FontSize="{StaticResource FontSizeSmall}"
+                                   Foreground="{StaticResource PrimaryBrush}"/>
+                        <TextBlock Text="Database connection, CRUD operations, stored procedure calls"
+                                   Foreground="Gray"
+                                   FontSize="10"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </CheckBox>
+
+                <!-- BLL Card -->
+                <CheckBox Style="{StaticResource BllCheckBoxStyle}"
+                          IsChecked="True">
+                    <StackPanel>
+                        <TextBlock Text="Business Logic Layer"
+                                   FontWeight="SemiBold"
+                                   FontSize="{StaticResource FontSizeSmall}"
+                                   Foreground="{StaticResource PrimaryBrush}"/>
+                        <TextBlock Text="Validation, rules, service methods, and business processes"
+                                   Foreground="Gray"
+                                   FontSize="10"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </CheckBox>
             </StackPanel>
         </Grid>
         
