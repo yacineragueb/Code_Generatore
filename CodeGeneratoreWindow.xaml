@@ -140,6 +140,7 @@
                 </CheckBox>
             </StackPanel>
 
+            <!-- List of Tables -->
             <Grid Grid.Row="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -152,7 +153,8 @@
                 <CheckBox Grid.Row="1"
                           Content="Select All"
                           Foreground="White"
-                          IsChecked="{Binding AreAllTablesSelected}" />
+                          IsChecked="{Binding AreAllTablesSelected}"
+                          IsEnabled="{Binding CanSelectAllTables}"/>
 
                 <ListView Grid.Row="2"
                           ItemsSource="{Binding Tables}">
@@ -213,7 +215,7 @@
                     <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding Session.ConnectionStatus}" />
 
                     <!-- Database -->
-                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding SelectedDatabase}" />
+                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding SelectedDatabaseDisplay}" />
                 </Grid>
             </Grid>
         </Border>

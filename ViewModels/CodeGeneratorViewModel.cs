@@ -8,7 +8,7 @@ namespace Code_Generatore.ViewModels
     {
         private readonly ConnectionSession _session;
         private DatabaseService _databaseService;
-        private string _selectedDatabase = "Not Selected Yet";
+        private string _selectedDatabase = string.Empty;
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
         private bool _areAllTablesSelected = false;
@@ -32,8 +32,13 @@ namespace Code_Generatore.ViewModels
                 LoadTables();
 
                 OnPropertyChanged(nameof(SelectedDatabase));
+                OnPropertyChanged(nameof(SelectedDatabaseDisplay));
+                OnPropertyChanged(nameof(CanSelectAllTables));
             }
         }
+
+        public string SelectedDatabaseDisplay =>
+           string.IsNullOrWhiteSpace(SelectedDatabase) ? "Not Selected Yet" : SelectedDatabase;
 
         public string OutputFolder
         {
@@ -65,6 +70,8 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(AreAllTablesSelected));
             }
         }
+
+        public bool CanSelectAllTables => !string.IsNullOrWhiteSpace(SelectedDatabase);
 
         public CodeGeneratorViewModel(ConnectionSession session)
         {
