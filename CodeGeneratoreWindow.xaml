@@ -31,6 +31,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -138,6 +139,31 @@
                     </StackPanel>
                 </CheckBox>
             </StackPanel>
+
+            <Grid Grid.Row="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Tables:" Foreground="White"/>
+
+                <CheckBox Grid.Row="1"
+                          Content="Select All"
+                          Foreground="White"
+                          IsChecked="{Binding AreAllTablesSelected}" />
+
+                <ListView Grid.Row="2"
+                          ItemsSource="{Binding Tables}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding TableName}"
+                                      IsChecked="{Binding IsSelected}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
         </Grid>
         
         <!--#endregion-->
