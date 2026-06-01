@@ -5,7 +5,7 @@
 
     <Style TargetType="Label">
         <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
-        <Setter Property="FontSize" Value="{StaticResource FontSizeLarge}"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeNormal}"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
     </Style>
