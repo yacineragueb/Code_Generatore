@@ -21,7 +21,184 @@
             <ColumnDefinition Width="*"  /> <!-- Left Side -->
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <!--region Right Side -->
+        <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Margin="{StaticResource MarginSize}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Top Right Panel -->
+            <Border Grid.Row="0"
+                    Grid.ColumnSpan="3"
+                    BorderBrush="{StaticResource PrimaryBrush}"
+                    BorderThickness="1">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{StaticResource PrimaryBrush}"
+                            Padding="{StaticResource PaddingSizeSmall}">
+                        <TextBlock Text="General information"
+                                   Foreground="White"/>
+                    </Border>
+
+                    <Grid Grid.Row="1" Margin="{StaticResource MarginSize}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Server -->
+                        <userControl:InfoItemControl Grid.Column="0"
+                            Title="Server Name :" Value="{Binding Session.ServerName}" />
+
+                        <!-- Username -->
+                        <userControl:InfoItemControl Grid.Column="1"
+                            Title="Username :" Value="{Binding Session.UserName}" />
+
+                        <!-- Status -->
+                        <userControl:InfoItemControl Grid.Column="2"
+                            Title="Status :" Value="{Binding Session.ConnectionStatus}" />
+
+                        <!-- Database -->
+                        <userControl:InfoItemControl Grid.Column="3"
+                            Title="Database Name :" Value="{Binding SelectedDatabaseDisplay}" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Bottom Right Panel -->
+            <Border Grid.Row="1"
+                    Grid.Column="2"
+                    BorderBrush="{StaticResource PrimaryBrush}"
+                    BorderThickness="1"
+                    Margin="0,5,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Header -->
+                    <Border Grid.Row="0"
+                            Background="{StaticResource PrimaryBrush}"
+                            Padding="{StaticResource PaddingSizeSmall}">
+                        <TextBlock Text="Operations"
+                            Foreground="White"/>
+                    </Border>
+
+                    <!-- Body -->
+                    <StackPanel Grid.Row="1"
+                                Margin="{StaticResource MarginSize}"
+                                Orientation="Vertical">
+
+                        <!-- Add New -->
+                        <Grid Margin="{StaticResource MarginSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"
+                                      x:Name="InsertCheckBox"/>
+                            <TextBox Grid.Column="1"
+                                     Text="Insert"
+                                     Padding="8,4"
+                                     HorizontalAlignment="Stretch"
+                                     IsEnabled="{Binding IsChecked, ElementName=InsertCheckBox}"/>
+                        </Grid>
+
+                        <!-- Update -->
+                        <Grid Margin="{StaticResource MarginSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"
+                                      x:Name="UpdateCheckBox"/>
+                            <TextBox Grid.Column="1"
+                                     Text="Update"
+                                     Padding="8,4"
+                                     HorizontalAlignment="Stretch"
+                                     IsEnabled="{Binding IsChecked, ElementName=UpdateCheckBox}"/>
+                        </Grid>
+
+                        <!-- Delete -->
+                        <Grid Margin="{StaticResource MarginSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"
+                                      x:Name="DeleteCheckBox"/>
+                            <TextBox Grid.Column="1"
+                                     Text="Delete"
+                                     Padding="8,4"
+                                     HorizontalAlignment="Stretch"
+                                     IsEnabled="{Binding IsChecked, ElementName=DeleteCheckBox}"/>
+                        </Grid>
+
+                        <!-- GetById -->
+                        <Grid Margin="{StaticResource MarginSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"
+                                      x:Name="GetByIdCheckBox"/>
+                            <TextBox Grid.Column="1"
+                                     Text="GetById"
+                                     Padding="8,4"
+                                     HorizontalAlignment="Stretch"
+                                     IsEnabled="{Binding IsChecked, ElementName=GetByIdCheckBox}"/>
+                        </Grid>
+
+                        <!-- GetAll -->
+                        <Grid Margin="{StaticResource MarginSize}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"
+                                      x:Name="GetAllCheckBox"/>
+                            <TextBox Grid.Column="1"
+                                     Text="GetAll"
+                                     Padding="8,4"
+                                     HorizontalAlignment="Stretch"
+                                     IsEnabled="{Binding IsChecked, ElementName=GetAllCheckBox}"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!--#endregion-->
         
         <!--#region Left Side-->
 
@@ -170,61 +347,9 @@
         
         <!--#endregion-->
 
-        <!-- #region Right Top Side -->
-
-        <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-                VerticalAlignment="Top"
-                Margin="{StaticResource MarginSize}"
-                BorderBrush="{StaticResource PrimaryBrush}"
-                BorderThickness="1">
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- Header -->
-                <Border Grid.Row="0"
-                        Background="{StaticResource PrimaryBrush}"
-                        Padding="{StaticResource PaddingSizeSmall}">
-                    
-                    <TextBlock Text="General information"
-                       Foreground="White"
-                       FontFamily="{StaticResource PoppinsFont}"
-                       FontSize="{StaticResource FontSizeSmall}"
-                       FontWeight="Normal"/>
-                </Border>
-
-                <!-- Info Row -->
-                <Grid Grid.Row="1" Margin="{StaticResource MarginSize}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Server -->
-                    <userControl:InfoItemControl Grid.Column="0" Title="Server Name :" Value="{Binding Session.ServerName}" />
-
-                    <!-- Username -->
-                    <userControl:InfoItemControl Grid.Column="1" Title="Username :" Value="{Binding Session.UserName}" />
-
-                    <!-- Status -->
-                    <userControl:InfoItemControl Grid.Column="2" Title="Status :" Value="{Binding Session.ConnectionStatus}" />
-
-                    <!-- Database -->
-                    <userControl:InfoItemControl Grid.Column="3" Title="Database Name :" Value="{Binding SelectedDatabaseDisplay}" />
-                </Grid>
-            </Grid>
-        </Border>
-        
-        <!-- #endregion -->
-
         <!--#region Bottom Side-->
         
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="{StaticResource PrimaryBrush}">
+        <Grid Grid.Row="1" Grid.ColumnSpan="4" Background="{StaticResource PrimaryBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
