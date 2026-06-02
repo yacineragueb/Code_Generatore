@@ -3,6 +3,7 @@ using Code_Generatore.ViewModels.Commands;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text;
 using System.Windows.Input;
 
 namespace Code_Generatore.ViewModels
@@ -15,6 +16,14 @@ namespace Code_Generatore.ViewModels
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
         private bool _areAllTablesSelected = false;
+        private string _previewCode = string.Empty;
+
+        // Checkboxes ( CRUD Operations )
+        private bool _insertSelected;
+        private bool _updateSelected;
+        private bool _deleteSelected;
+        private bool _getByIdSelected;
+        private bool _getAllSelected;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -37,6 +46,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(SelectedDatabase));
                 OnPropertyChanged(nameof(SelectedDatabaseDisplay));
                 OnPropertyChanged(nameof(CanSelectAllTables));
+                OnPropertyChanged(nameof(CanGenerate));
             }
         }
 
@@ -51,7 +61,8 @@ namespace Code_Generatore.ViewModels
                     return;
 
                 _outputFolder = value;
-                OnPropertyChanged(nameof(OutputFolder)); 
+                OnPropertyChanged(nameof(OutputFolder));
+                OnPropertyChanged(nameof(CanGenerate));
             }
         }
 
@@ -65,7 +76,8 @@ namespace Code_Generatore.ViewModels
                     return;
 
                 _projectName = value; 
-                OnPropertyChanged(nameof(ProjectName)); 
+                OnPropertyChanged(nameof(ProjectName));
+                OnPropertyChanged(nameof(CanGenerate));
             }
         }
 
@@ -90,12 +102,124 @@ namespace Code_Generatore.ViewModels
 
         public bool CanSelectAllTables => !string.IsNullOrWhiteSpace(SelectedDatabase);
 
+        public ICommand GenerateCommand { get; }
+
+        public bool CanGenerate => !string.IsNullOrWhiteSpace(SelectedDatabase) && !string.IsNullOrWhiteSpace(ProjectName) && !string.IsNullOrWhiteSpace(OutputFolder);
+
+        public string PreviewCode
+        {
+            get => _previewCode;
+            set { 
+                if (_previewCode == value)
+                    return;
+
+                _previewCode = value; 
+                OnPropertyChanged(nameof(PreviewCode));
+            }
+        }
+
+        public bool InsertSelected
+        {
+            get => _insertSelected;
+            set { 
+                _insertSelected = value;
+                OnPropertyChanged(nameof(InsertSelected)); 
+
+                RefreshPreview(); 
+            }
+        }
+        public bool UpdateSelected
+        {
+            get => _updateSelected;
+            set { 
+                _updateSelected = value;
+                OnPropertyChanged(nameof(UpdateSelected));
+
+                RefreshPreview(); 
+            }
+        }
+        public bool DeleteSelected
+        {
+            get => _deleteSelected;
+            set { 
+                _deleteSelected = value;
+                OnPropertyChanged(nameof(DeleteSelected));
+
+                RefreshPreview(); 
+            }
+        }
+        public bool GetByIdSelected
+        {
+            get => _getByIdSelected;
+            set { 
+                _getByIdSelected = value;
+                OnPropertyChanged(nameof(GetByIdSelected)); 
+
+                RefreshPreview(); 
+            }
+        }
+        public bool GetAllSelected
+        {
+            get => _getAllSelected;
+            set
+            {
+                _getAllSelected = value;
+                OnPropertyChanged(nameof(_getAllSelected));
+
+                RefreshPreview();
+            }
+        }
+
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
             _databaseService = new DatabaseService();
             DatabasesList = _databaseService.GetAllDatabases(_session);
             BrowseCommand = new RelayCommand(Browse);
+            GenerateCommand = new RelayCommand(GenerateCode);
+        }
+
+        private void RefreshPreview()
+        {
+            StringBuilder preview = new StringBuilder();
+
+            preview.AppendLine("// ==============================");
+            preview.AppendLine("//   BUSINESS LAYER PREVIEW");
+            preview.AppendLine("// ==============================");
+            preview.AppendLine();
+
+            // Simulate columns fetched from DB
+            var columns = new List<ColumnInfo>
+            {
+                new ColumnInfo { ColumnName = "ID",          CSharpType = "int",      IsPrimaryKey = true  },
+                new ColumnInfo { ColumnName = "FirstName",   CSharpType = "string",   IsPrimaryKey = false },
+                new ColumnInfo { ColumnName = "LastName",    CSharpType = "string",   IsPrimaryKey = false },
+                new ColumnInfo { ColumnName = "DateOfBirth", CSharpType = "DateTime", IsPrimaryKey = false },
+                new ColumnInfo { ColumnName = "Phone",       CSharpType = "string",   IsPrimaryKey = false },
+            };
+
+            var generator = new PreviewGenerator("Person", columns);
+
+             preview.Append(generator.Generate(
+                insert: InsertSelected,
+                update: UpdateSelected,
+                delete: DeleteSelected,
+                getById: GetByIdSelected,
+                getAll: GetAllSelected
+            ));
+
+            if (!InsertSelected && !UpdateSelected && !DeleteSelected && !GetByIdSelected && !GetAllSelected)
+            {
+                preview.Clear();
+                preview.AppendLine("// ⚠ Select at least one CRUD operation to preview code.");
+            }
+
+            PreviewCode = preview.ToString();
+        }
+
+        private void GenerateCode(object? paramater)
+        {
+            throw new NotImplementedException();
         }
 
         private void Browse(object? paramter)
