@@ -93,6 +93,8 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
@@ -104,7 +106,7 @@
                             Foreground="White"/>
                     </Border>
 
-                    <!-- Body -->
+                    <!-- Operations -->
                     <StackPanel Grid.Row="1"
                                 Margin="{StaticResource MarginSize}"
                                 Orientation="Vertical">
@@ -194,6 +196,10 @@
                                      IsEnabled="{Binding IsChecked, ElementName=GetAllCheckBox}"/>
                         </Grid>
                     </StackPanel>
+
+                    <Separator Grid.Row="2"/>
+
+                    <Button x:Name="GenerateBtn" Style="{StaticResource PrimaryBtn}" Grid.Row="3" Content="Generate" />
                 </Grid>
             </Border>
             
@@ -259,7 +265,9 @@
             <!-- Project name selector -->
             <StackPanel Grid.Row="1" >
                 <Label Content="Enter your project name:" Foreground="White" />
-                <TextBox d:Text="CodeGeneratore" FontSize="{StaticResource FontSizeSmall}" />
+                <TextBox x:Name="projectNameTextBox" 
+                         Text="{Binding ProjectName, UpdateSourceTrigger=LostFocus}" 
+                         FontSize="{StaticResource FontSizeSmall}" />
             </StackPanel>
 
             <!-- Project output folder selector -->
@@ -272,16 +280,20 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="OutputFolderTextBox" d:Text="C:/Desktop" FontSize="{StaticResource FontSizeSmall}" Grid.Column="0" />
+                    <TextBox x:Name="OutputFolderTextBox" 
+                             Grid.Column="0"
+                             FontSize="{StaticResource FontSizeSmall}" 
+                             Text="{Binding OutputFolder, UpdateSourceTrigger=LostFocus}"/>
 
                     <Button x:Name="BrowseBtn" Grid.Column="1"
-                            Style="{StaticResource InputStyle}"
+                            Padding="{StaticResource PaddingSizeSmall}"
                             Background="White"
                             Content="Browse…"
                             Margin="0,5,5,5"
                             FontSize="{StaticResource FontSizeSmall}"
+                            FontFamily="{StaticResource PoppinsFont}"
                             Cursor="Hand"
-                            Click="BrowseBtn_Click"/>
+                            Command="{Binding BrowseCommand}"/>
                 </Grid>
             </StackPanel>
 

@@ -1,6 +1,5 @@
 ﻿using Code_Generatore.BusinessLayer;
 using Code_Generatore.ViewModels;
-using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -48,20 +47,6 @@ namespace Code_Generatore
         private void DisconnectBtn_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
-
-        private void BrowseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFolderDialog openFolderDialog = new OpenFolderDialog
-            {
-                Title = "Select a folder",
-                Multiselect = false,
-            };
-
-            if(openFolderDialog.ShowDialog() == true)
-            {
-                OutputFolderTextBox.Text = openFolderDialog.FolderName;
-            }
         }
     }
 }

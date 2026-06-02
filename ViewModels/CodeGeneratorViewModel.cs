@@ -1,6 +1,9 @@
 ﻿using Code_Generatore.BusinessLayer;
+using Code_Generatore.ViewModels.Commands;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Code_Generatore.ViewModels
 {
@@ -43,13 +46,27 @@ namespace Code_Generatore.ViewModels
         public string OutputFolder
         {
             get => _outputFolder;
-            set { _outputFolder = value; OnPropertyChanged(nameof(OutputFolder)); }
+            set { 
+                if (_outputFolder == value)
+                    return;
+
+                _outputFolder = value;
+                OnPropertyChanged(nameof(OutputFolder)); 
+            }
         }
+
+        public ICommand BrowseCommand { get; }
 
         public string ProjectName
         {
             get => _projectName;
-            set { _projectName = value; OnPropertyChanged(nameof(ProjectName)); }
+            set { 
+                if(_projectName == value)
+                    return;
+
+                _projectName = value; 
+                OnPropertyChanged(nameof(ProjectName)); 
+            }
         }
 
         public bool AreAllTablesSelected
@@ -78,6 +95,21 @@ namespace Code_Generatore.ViewModels
             _session = session;
             _databaseService = new DatabaseService();
             DatabasesList = _databaseService.GetAllDatabases(_session);
+            BrowseCommand = new RelayCommand(Browse);
+        }
+
+        private void Browse(object? paramter)
+        {
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog
+            {
+                Title = "Select a folder",
+                Multiselect = false,
+            };
+
+            if (openFolderDialog.ShowDialog() == true)
+            {
+                OutputFolder = openFolderDialog.FolderName;
+            }
         }
 
         private void LoadTables()
