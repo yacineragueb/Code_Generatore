@@ -28,6 +28,7 @@
     <None Remove="Resources\Fonts\Poppins-SemiBoldItalic.ttf" />
     <None Remove="Resources\Fonts\Poppins-Thin.ttf" />
     <None Remove="Resources\Fonts\Poppins-ThinItalic.ttf" />
+    <None Remove="Resources\Images\Copy.png" />
     <None Remove="Resources\Images\Logo-white.png" />
   </ItemGroup>
 
@@ -59,6 +60,7 @@
     <Resource Include="Resources\Fonts\Poppins-SemiBoldItalic.ttf" />
     <Resource Include="Resources\Fonts\Poppins-Thin.ttf" />
     <Resource Include="Resources\Fonts\Poppins-ThinItalic.ttf" />
+    <Resource Include="Resources\Images\Copy.png" />
     <Resource Include="Resources\Images\Logo-white.png" />
   </ItemGroup>
 

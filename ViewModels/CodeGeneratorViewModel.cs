@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Code_Generatore.ViewModels
@@ -68,6 +69,9 @@ namespace Code_Generatore.ViewModels
         }
 
         public ICommand BrowseCommand { get; }
+        public ICommand CopyPreviewCommand { get; }
+
+        public bool HasPreviewCode => !string.IsNullOrWhiteSpace(PreviewCode);
 
         public string ProjectName
         {
@@ -117,6 +121,7 @@ namespace Code_Generatore.ViewModels
 
                 _previewCode = value; 
                 OnPropertyChanged(nameof(PreviewCode));
+                OnPropertyChanged(nameof(HasPreviewCode));
             }
         }
 
@@ -179,6 +184,7 @@ namespace Code_Generatore.ViewModels
             _databaseService = new DatabaseService();
             DatabasesList = _databaseService.GetAllDatabases(_session);
             BrowseCommand = new RelayCommand(Browse);
+            CopyPreviewCommand = new RelayCommand(_ => Clipboard.SetText(PreviewCode));
             GenerateCommand = new RelayCommand(GenerateCode);
         }
 

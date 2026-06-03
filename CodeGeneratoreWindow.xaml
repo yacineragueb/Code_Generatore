@@ -101,8 +101,37 @@
                     <Border Grid.Row="0"
                             Background="{StaticResource PrimaryBrush}"
                             Padding="{StaticResource PaddingSizeSmall}">
-                        <TextBlock Text="Preview Window"
-                            Foreground="White"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Preview Window"
+                                Foreground="White" VerticalAlignment="Center"/>
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding CopyPreviewCommand}"
+                                    IsEnabled="{Binding HasPreviewCode}"
+                                    Background="White"
+                                    Padding="8,3"
+                                    Cursor="Hand"
+                                    BorderBrush="{StaticResource PrimaryBrush}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/Images/Copy.png"
+                                           Width="18"
+                                           Height="24"
+                                           Margin="0,0,6,0"/>
+                                    <TextBlock Text="Copy"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Medium"
+                                               FontSize="{StaticResource FontSizeSmall}"
+                                               FontFamily="{StaticResource PoppinsFont}"
+                                               Foreground="{StaticResource PrimaryBrush}"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        
                     </Border>
 
                     <!-- Body -->
