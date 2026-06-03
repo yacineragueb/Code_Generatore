@@ -47,6 +47,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(SelectedDatabaseDisplay));
                 OnPropertyChanged(nameof(CanSelectAllTables));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreOperationsEnabled));
             }
         }
 
@@ -97,6 +98,7 @@ namespace Code_Generatore.ViewModels
                 }
 
                 OnPropertyChanged(nameof(AreAllTablesSelected));
+                OnPropertyChanged(nameof(AreOperationsEnabled));
             }
         }
 
@@ -170,6 +172,7 @@ namespace Code_Generatore.ViewModels
             }
         }
 
+        public bool AreOperationsEnabled => !string.IsNullOrWhiteSpace(SelectedDatabase) && Tables.Any(table => table.IsSelected);
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
@@ -181,38 +184,36 @@ namespace Code_Generatore.ViewModels
 
         private void RefreshPreview()
         {
-            StringBuilder preview = new StringBuilder();
+            if (!InsertSelected && !UpdateSelected && !DeleteSelected && !GetByIdSelected && !GetAllSelected)
+            {
+                PreviewCode = "// ⚠ Select at least one CRUD operation to preview code.";
+                return;
+            }
+
+            var selectedTable = Tables.FirstOrDefault(t => t.IsSelected);
+            if (selectedTable == null)
+            {
+                PreviewCode = "// ⚠ Select a table to preview code.";
+                return;
+            }
+
+            var columns = _databaseService.GetTableColumns(Session, SelectedDatabase, selectedTable.TableName);
+            var generator = new PreviewGenerator(selectedTable.TableName, columns);
+
+            var preview = new StringBuilder();
 
             preview.AppendLine("// ==============================");
             preview.AppendLine("//   BUSINESS LAYER PREVIEW");
             preview.AppendLine("// ==============================");
             preview.AppendLine();
 
-            // Simulate columns fetched from DB
-            var columns = new List<ColumnInfo>
-            {
-                new ColumnInfo { ColumnName = "ID",          CSharpType = "int",      IsPrimaryKey = true  },
-                new ColumnInfo { ColumnName = "FirstName",   CSharpType = "string",   IsPrimaryKey = false },
-                new ColumnInfo { ColumnName = "LastName",    CSharpType = "string",   IsPrimaryKey = false },
-                new ColumnInfo { ColumnName = "DateOfBirth", CSharpType = "DateTime", IsPrimaryKey = false },
-                new ColumnInfo { ColumnName = "Phone",       CSharpType = "string",   IsPrimaryKey = false },
-            };
-
-            var generator = new PreviewGenerator("Person", columns);
-
-             preview.Append(generator.Generate(
+            preview.Append(generator.Generate(
                 insert: InsertSelected,
                 update: UpdateSelected,
                 delete: DeleteSelected,
                 getById: GetByIdSelected,
                 getAll: GetAllSelected
             ));
-
-            if (!InsertSelected && !UpdateSelected && !DeleteSelected && !GetByIdSelected && !GetAllSelected)
-            {
-                preview.Clear();
-                preview.AppendLine("// ⚠ Select at least one CRUD operation to preview code.");
-            }
 
             PreviewCode = preview.ToString();
         }
@@ -248,7 +249,15 @@ namespace Code_Generatore.ViewModels
 
             foreach (string tableName in tableNames)
             {
-                Tables.Add(new TableItem(tableName));
+                var table = new TableItem(tableName);
+
+                table.PropertyChanged += (sender, e) =>
+                {
+                    if (e.PropertyName == nameof(TableItem.IsSelected))
+                        OnPropertyChanged(nameof(AreOperationsEnabled));
+                };
+
+                Tables.Add(table);
             }
         }
 

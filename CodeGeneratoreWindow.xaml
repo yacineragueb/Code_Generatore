@@ -158,7 +158,8 @@
                                       VerticalAlignment="Center"
                                       Margin="0,0,8,0"
                                       x:Name="InsertCheckBox"
-                                      IsChecked="{Binding InsertSelected}"/>
+                                      IsChecked="{Binding InsertSelected}"
+                                      IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
                                      Text="Insert"
                                      Padding="8,4"
@@ -176,7 +177,8 @@
                                       VerticalAlignment="Center"
                                       Margin="0,0,8,0"
                                       x:Name="UpdateCheckBox"
-                                      IsChecked="{Binding UpdateSelected}"/>
+                                      IsChecked="{Binding UpdateSelected}"
+                                      IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
                                      Text="Update"
                                      Padding="8,4"
@@ -194,7 +196,8 @@
                                       VerticalAlignment="Center"
                                       Margin="0,0,8,0"
                                       x:Name="DeleteCheckBox"
-                                      IsChecked="{Binding DeleteSelected}"/>
+                                      IsChecked="{Binding DeleteSelected}"
+                                      IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
                                      Text="Delete"
                                      Padding="8,4"
@@ -212,7 +215,8 @@
                                       VerticalAlignment="Center"
                                       Margin="0,0,8,0"
                                       x:Name="GetByIdCheckBox"
-                                      IsChecked="{Binding GetByIdSelected}"/>
+                                      IsChecked="{Binding GetByIdSelected}"
+                                      IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
                                      Text="GetById"
                                      Padding="8,4"
@@ -230,7 +234,8 @@
                                       VerticalAlignment="Center"
                                       Margin="0,0,8,0"
                                       x:Name="GetAllCheckBox"
-                                      IsChecked="{Binding GetAllSelected}"/>
+                                      IsChecked="{Binding GetAllSelected}"
+                                      IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
                                      Text="GetAll"
                                      Padding="8,4"
