@@ -16,8 +16,10 @@ namespace Code_Generatore.ViewModels
         private string _selectedDatabase = string.Empty;
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
-        private bool _areAllTablesSelected = false;
         private string _previewCode = string.Empty;
+        private bool _hasSelectedTable = false;
+        private bool _isResetting = false;
+        private CancellationTokenSource? _previewCts;
 
         // Checkboxes ( CRUD Operations )
         private bool _insertSelected;
@@ -42,6 +44,8 @@ namespace Code_Generatore.ViewModels
 
                 _selectedDatabase = value;
 
+                ResetCRUDOperations();
+
                 LoadTables();
 
                 OnPropertyChanged(nameof(SelectedDatabase));
@@ -49,6 +53,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(CanSelectAllTables));
                 OnPropertyChanged(nameof(CanGenerate));
                 OnPropertyChanged(nameof(AreOperationsEnabled));
+                OnPropertyChanged(nameof(AreAllTablesSelected));
             }
         }
 
@@ -88,14 +93,9 @@ namespace Code_Generatore.ViewModels
 
         public bool AreAllTablesSelected
         {
-            get => _areAllTablesSelected;
+            get => Tables.Count > 0 && Tables.All(table => table.IsSelected);
             set
             {
-                if (_areAllTablesSelected == value)
-                    return;
-
-                _areAllTablesSelected = value;
-
                 foreach (var table in Tables)
                 {
                     table.IsSelected = value;
@@ -106,7 +106,7 @@ namespace Code_Generatore.ViewModels
             }
         }
 
-        public bool CanSelectAllTables => !string.IsNullOrWhiteSpace(SelectedDatabase);
+        public bool CanSelectAllTables => !string.IsNullOrWhiteSpace(SelectedDatabase) && Tables.Count > 0;
 
         public ICommand GenerateCommand { get; }
 
@@ -130,7 +130,7 @@ namespace Code_Generatore.ViewModels
             get => _insertSelected;
             set { 
                 _insertSelected = value;
-                OnPropertyChanged(nameof(InsertSelected)); 
+                OnPropertyChanged(nameof(InsertSelected));
 
                 RefreshPreview(); 
             }
@@ -171,13 +171,28 @@ namespace Code_Generatore.ViewModels
             set
             {
                 _getAllSelected = value;
-                OnPropertyChanged(nameof(_getAllSelected));
+                OnPropertyChanged(nameof(GetAllSelected));
 
                 RefreshPreview();
             }
         }
 
-        public bool AreOperationsEnabled => !string.IsNullOrWhiteSpace(SelectedDatabase) && Tables.Any(table => table.IsSelected);
+        public bool AreOperationsEnabled => !string.IsNullOrWhiteSpace(SelectedDatabase) && HasSelectedTable;
+
+        public bool HasSelectedTable
+        {
+            get => _hasSelectedTable;
+            set
+            {
+                if (_hasSelectedTable == value) return;
+
+                _hasSelectedTable = value;
+
+                OnPropertyChanged(nameof(HasSelectedTable));
+                OnPropertyChanged(nameof(AreOperationsEnabled));
+            }
+        }
+
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
@@ -190,11 +205,7 @@ namespace Code_Generatore.ViewModels
 
         private void RefreshPreview()
         {
-            if (!InsertSelected && !UpdateSelected && !DeleteSelected && !GetByIdSelected && !GetAllSelected)
-            {
-                PreviewCode = "// ⚠ Select at least one CRUD operation to preview code.";
-                return;
-            }
+            if (_isResetting) return; // skip during batch reset
 
             var selectedTable = Tables.FirstOrDefault(t => t.IsSelected);
             if (selectedTable == null)
@@ -203,8 +214,26 @@ namespace Code_Generatore.ViewModels
                 return;
             }
 
-            var columns = _databaseService.GetTableColumns(Session, SelectedDatabase, selectedTable.TableName);
-            var generator = new PreviewGenerator(selectedTable.TableName, columns);
+            if (!InsertSelected && !UpdateSelected && !DeleteSelected && !GetByIdSelected && !GetAllSelected)
+            {
+                PreviewCode = "// ⚠ Select at least one CRUD operation to preview code.";
+                return;
+            }
+
+            _previewCts?.Cancel();
+            _previewCts = new CancellationTokenSource();
+
+            _ = RefreshPreviewAsync(selectedTable.TableName, _previewCts.Token);
+        }
+
+        private async Task RefreshPreviewAsync(string tableName, CancellationToken ct)
+        {
+            var columns = await Task.Run(() => 
+                _databaseService.GetTableColumns(Session, SelectedDatabase, tableName));
+
+            if (ct.IsCancellationRequested) return; // stale, discard
+
+            var generator = new PreviewGenerator(tableName, columns);
 
             var preview = new StringBuilder();
 
@@ -260,11 +289,45 @@ namespace Code_Generatore.ViewModels
                 table.PropertyChanged += (sender, e) =>
                 {
                     if (e.PropertyName == nameof(TableItem.IsSelected))
-                        OnPropertyChanged(nameof(AreOperationsEnabled));
+                    {
+                        HasSelectedTable = Tables.Any(t => t.IsSelected);
+
+                        if (!HasSelectedTable)
+                        {
+                            ResetCRUDOperations();
+                        }
+
+                        OnPropertyChanged(nameof(AreAllTablesSelected));
+                        RefreshPreview();
+                    }
                 };
 
                 Tables.Add(table);
             }
+        }
+
+        private void ResetCRUDOperations()
+        {
+            _isResetting = true;
+
+            _previewCts?.Cancel(); // ← kill any in-flight preview immediately
+            _previewCts = null;
+
+            _insertSelected = false;
+            _updateSelected = false;
+            _deleteSelected = false;
+            _getByIdSelected = false;
+            _getAllSelected = false;
+
+            OnPropertyChanged(nameof(InsertSelected));
+            OnPropertyChanged(nameof(UpdateSelected));
+            OnPropertyChanged(nameof(DeleteSelected));
+            OnPropertyChanged(nameof(GetByIdSelected));
+            OnPropertyChanged(nameof(GetAllSelected));
+
+            PreviewCode = string.Empty;
+
+            _isResetting = false;
         }
 
         public void OnPropertyChanged(string name)
