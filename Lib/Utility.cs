@@ -82,5 +82,17 @@ namespace Code_Generatore.Lib
 
             credential.Delete();
         }
+
+        /// <summary>
+        /// Checks whether a string is null, empty, or whitespace.
+        /// </summary>
+        /// <param name="value">The string to check.</param>
+        /// <returns>
+        /// <see langword="true"/> if the string is null, empty, or whitespace; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static bool IsEmpty(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value);
+        }
     }
 }

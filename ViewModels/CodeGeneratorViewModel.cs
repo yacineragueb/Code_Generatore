@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using static Code_Generatore.Lib.Utility;
 
 namespace Code_Generatore.ViewModels
 {
@@ -58,7 +59,7 @@ namespace Code_Generatore.ViewModels
         }
 
         public string SelectedDatabaseDisplay =>
-           string.IsNullOrWhiteSpace(SelectedDatabase) ? "Not Selected Yet" : SelectedDatabase;
+           IsEmpty(SelectedDatabase) ? "Not Selected Yet" : SelectedDatabase;
 
         public string OutputFolder
         {
@@ -76,7 +77,7 @@ namespace Code_Generatore.ViewModels
         public ICommand BrowseCommand { get; }
         public ICommand CopyPreviewCommand { get; }
 
-        public bool HasPreviewCode => !string.IsNullOrWhiteSpace(PreviewCode);
+        public bool HasPreviewCode => !IsEmpty(PreviewCode);
 
         public string ProjectName
         {
@@ -106,11 +107,11 @@ namespace Code_Generatore.ViewModels
             }
         }
 
-        public bool CanSelectAllTables => !string.IsNullOrWhiteSpace(SelectedDatabase) && Tables.Count > 0;
+        public bool CanSelectAllTables => !IsEmpty(SelectedDatabase) && Tables.Count > 0;
 
         public ICommand GenerateCommand { get; }
 
-        public bool CanGenerate => !string.IsNullOrWhiteSpace(SelectedDatabase) && !string.IsNullOrWhiteSpace(ProjectName) && !string.IsNullOrWhiteSpace(OutputFolder);
+        public bool CanGenerate => !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder);
 
         public string PreviewCode
         {
@@ -128,7 +129,9 @@ namespace Code_Generatore.ViewModels
         public bool InsertSelected
         {
             get => _insertSelected;
-            set { 
+            set {
+                if (_insertSelected == value) return;
+
                 _insertSelected = value;
                 OnPropertyChanged(nameof(InsertSelected));
 
@@ -139,6 +142,8 @@ namespace Code_Generatore.ViewModels
         {
             get => _updateSelected;
             set { 
+                if (_updateSelected == value) return;
+
                 _updateSelected = value;
                 OnPropertyChanged(nameof(UpdateSelected));
 
@@ -148,7 +153,9 @@ namespace Code_Generatore.ViewModels
         public bool DeleteSelected
         {
             get => _deleteSelected;
-            set { 
+            set {
+                if (_deleteSelected == value) return;
+
                 _deleteSelected = value;
                 OnPropertyChanged(nameof(DeleteSelected));
 
@@ -158,7 +165,9 @@ namespace Code_Generatore.ViewModels
         public bool GetByIdSelected
         {
             get => _getByIdSelected;
-            set { 
+            set {
+                if (_getByIdSelected == value) return;
+
                 _getByIdSelected = value;
                 OnPropertyChanged(nameof(GetByIdSelected)); 
 
@@ -170,6 +179,8 @@ namespace Code_Generatore.ViewModels
             get => _getAllSelected;
             set
             {
+                if (_getAllSelected == value) return;
+
                 _getAllSelected = value;
                 OnPropertyChanged(nameof(GetAllSelected));
 
@@ -177,7 +188,7 @@ namespace Code_Generatore.ViewModels
             }
         }
 
-        public bool AreOperationsEnabled => !string.IsNullOrWhiteSpace(SelectedDatabase) && HasSelectedTable;
+        public bool AreOperationsEnabled => !IsEmpty(SelectedDatabase) && HasSelectedTable;
 
         public bool HasSelectedTable
         {
@@ -229,7 +240,7 @@ namespace Code_Generatore.ViewModels
         private async Task RefreshPreviewAsync(string tableName, CancellationToken ct)
         {
             var columns = await Task.Run(() => 
-                _databaseService.GetTableColumns(Session, SelectedDatabase, tableName));
+                _databaseService.GetTableColumns(Session, SelectedDatabase, tableName), ct);
 
             if (ct.IsCancellationRequested) return; // stale, discard
 
@@ -276,7 +287,7 @@ namespace Code_Generatore.ViewModels
         {
             Tables.Clear();
 
-            if (string.IsNullOrWhiteSpace(SelectedDatabase))
+            if (IsEmpty(SelectedDatabase))
                 return;
 
             List<string> tableNames =
