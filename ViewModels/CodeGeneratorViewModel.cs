@@ -22,12 +22,23 @@ namespace Code_Generatore.ViewModels
         private bool _isResetting = false;
         private CancellationTokenSource? _previewCts;
 
-        // Checkboxes ( CRUD Operations )
         private bool _insertSelected;
         private bool _updateSelected;
         private bool _deleteSelected;
         private bool _getByIdSelected;
         private bool _getAllSelected;
+
+        private const string INSERT_FN_NAME = "Insert";
+        private const string UPDATE_FN_NAME = "Update";
+        private const string DELETE_FN_NAME = "Delete";
+        private const string GET_BY_ID_FN_NAME = "GetById";
+        private const string GET_ALL_FN_NAME = "GetAll";
+
+        private string _insertFunctionName = INSERT_FN_NAME;
+        private string _updateFunctionName = UPDATE_FN_NAME;
+        private string _deleteFunctionName = DELETE_FN_NAME;
+        private string _getByIdFunctionName = GET_BY_ID_FN_NAME;
+        private string _getAllFunctionName = GET_ALL_FN_NAME;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -45,7 +56,8 @@ namespace Code_Generatore.ViewModels
 
                 _selectedDatabase = value;
 
-                ResetCRUDOperations();
+                ResetCRUDOperationsCheckbox();
+                ResetCRUDOperationsfunctionNames();
 
                 LoadTables();
 
@@ -138,6 +150,19 @@ namespace Code_Generatore.ViewModels
                 RefreshPreview(); 
             }
         }
+        public string InsertFunctionName
+        {
+            get => _insertFunctionName;
+            set
+            {
+                if (_insertFunctionName == value) return;
+
+                _insertFunctionName = value;
+                OnPropertyChanged(nameof(InsertFunctionName));
+                RefreshPreview();
+            }
+        }
+
         public bool UpdateSelected
         {
             get => _updateSelected;
@@ -150,6 +175,19 @@ namespace Code_Generatore.ViewModels
                 RefreshPreview(); 
             }
         }
+        public string UpdateFunctionName
+        {
+            get => _updateFunctionName;
+            set
+            {
+                if (_updateFunctionName == value) return;
+
+                _updateFunctionName = value;
+                OnPropertyChanged(nameof(UpdateFunctionName));
+                RefreshPreview();
+            }
+        }
+
         public bool DeleteSelected
         {
             get => _deleteSelected;
@@ -162,6 +200,19 @@ namespace Code_Generatore.ViewModels
                 RefreshPreview(); 
             }
         }
+        public string DeleteFunctionName
+        {
+            get => _deleteFunctionName;
+            set
+            {
+                if (_deleteFunctionName == value) return;
+
+                _deleteFunctionName = value;
+                OnPropertyChanged(nameof(DeleteFunctionName));
+                RefreshPreview();
+            }
+        }
+
         public bool GetByIdSelected
         {
             get => _getByIdSelected;
@@ -171,9 +222,22 @@ namespace Code_Generatore.ViewModels
                 _getByIdSelected = value;
                 OnPropertyChanged(nameof(GetByIdSelected)); 
 
-                RefreshPreview(); 
+                RefreshPreview();
             }
         }
+        public string GetByIdFunctionName
+        {
+            get => _getByIdFunctionName;
+            set
+            {
+                if (_getByIdFunctionName == value) return;
+
+                _getByIdFunctionName = value;
+                OnPropertyChanged(nameof(GetByIdFunctionName));
+                RefreshPreview();
+            }
+        }
+
         public bool GetAllSelected
         {
             get => _getAllSelected;
@@ -184,6 +248,18 @@ namespace Code_Generatore.ViewModels
                 _getAllSelected = value;
                 OnPropertyChanged(nameof(GetAllSelected));
 
+                RefreshPreview();
+            }
+        }
+        public string GetAllFunctionName
+        {
+            get => _getAllFunctionName;
+            set
+            {
+                if (_getAllFunctionName == value) return;
+
+                _getAllFunctionName = value;
+                OnPropertyChanged(nameof(GetAllFunctionName));
                 RefreshPreview();
             }
         }
@@ -253,12 +329,21 @@ namespace Code_Generatore.ViewModels
             preview.AppendLine("// ==============================");
             preview.AppendLine();
 
+            string insertFnName = IsEmpty(InsertFunctionName) ? INSERT_FN_NAME : InsertFunctionName;
+            string updateFnName = IsEmpty(UpdateFunctionName) ? UPDATE_FN_NAME : UpdateFunctionName;
+            string deleteFnName = IsEmpty(DeleteFunctionName) ? DELETE_FN_NAME : DeleteFunctionName;
+            string getByIdFnName = IsEmpty(GetByIdFunctionName) ? GET_BY_ID_FN_NAME : GetByIdFunctionName;
+            string getAllFnName = IsEmpty(GetAllFunctionName) ? GET_ALL_FN_NAME : GetAllFunctionName;
+
+            var functionNames = new FunctionNames(insertFnName, updateFnName, deleteFnName, getByIdFnName, getAllFnName);
+
             preview.Append(generator.Generate(
                 insert: InsertSelected,
                 update: UpdateSelected,
                 delete: DeleteSelected,
                 getById: GetByIdSelected,
-                getAll: GetAllSelected
+                getAll: GetAllSelected,
+                functionNames
             ));
 
             PreviewCode = preview.ToString();
@@ -305,8 +390,10 @@ namespace Code_Generatore.ViewModels
 
                         if (!HasSelectedTable)
                         {
-                            ResetCRUDOperations();
+                            ResetCRUDOperationsCheckbox();
                         }
+
+                        ResetCRUDOperationsfunctionNames();
 
                         OnPropertyChanged(nameof(AreAllTablesSelected));
                         RefreshPreview();
@@ -317,7 +404,7 @@ namespace Code_Generatore.ViewModels
             }
         }
 
-        private void ResetCRUDOperations()
+        private void ResetCRUDOperationsCheckbox()
         {
             _isResetting = true;
 
@@ -339,6 +426,21 @@ namespace Code_Generatore.ViewModels
             PreviewCode = string.Empty;
 
             _isResetting = false;
+        }
+
+        private void ResetCRUDOperationsfunctionNames()
+        {
+            _insertFunctionName = INSERT_FN_NAME;
+            _updateFunctionName = UPDATE_FN_NAME;
+            _deleteFunctionName = DELETE_FN_NAME;
+            _getByIdFunctionName = GET_BY_ID_FN_NAME;
+            _getAllFunctionName = GET_ALL_FN_NAME;
+
+            OnPropertyChanged(nameof(InsertFunctionName));
+            OnPropertyChanged(nameof(UpdateFunctionName));
+            OnPropertyChanged(nameof(DeleteFunctionName));
+            OnPropertyChanged(nameof(GetByIdFunctionName));
+            OnPropertyChanged(nameof(GetAllFunctionName));
         }
 
         public void OnPropertyChanged(string name)

@@ -190,7 +190,7 @@
                                       IsChecked="{Binding InsertSelected}"
                                       IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
-                                     Text="Insert"
+                                     Text="{Binding InsertFunctionName, UpdateSourceTrigger=LostFocus}"
                                      Padding="8,4"
                                      HorizontalAlignment="Stretch"
                                      IsEnabled="{Binding IsChecked, ElementName=InsertCheckBox}"/>
@@ -209,7 +209,7 @@
                                       IsChecked="{Binding UpdateSelected}"
                                       IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
-                                     Text="Update"
+                                     Text="{Binding UpdateFunctionName, UpdateSourceTrigger=LostFocus}"
                                      Padding="8,4"
                                      HorizontalAlignment="Stretch"
                                      IsEnabled="{Binding IsChecked, ElementName=UpdateCheckBox}"/>
@@ -228,7 +228,7 @@
                                       IsChecked="{Binding DeleteSelected}"
                                       IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
-                                     Text="Delete"
+                                     Text="{Binding DeleteFunctionName, UpdateSourceTrigger=LostFocus}"
                                      Padding="8,4"
                                      HorizontalAlignment="Stretch"
                                      IsEnabled="{Binding IsChecked, ElementName=DeleteCheckBox}"/>
@@ -247,7 +247,7 @@
                                       IsChecked="{Binding GetByIdSelected}"
                                       IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
-                                     Text="GetById"
+                                     Text="{Binding GetByIdFunctionName, UpdateSourceTrigger=LostFocus}"
                                      Padding="8,4"
                                      HorizontalAlignment="Stretch"
                                      IsEnabled="{Binding IsChecked, ElementName=GetByIdCheckBox}"/>
@@ -266,7 +266,7 @@
                                       IsChecked="{Binding GetAllSelected}"
                                       IsEnabled="{Binding AreOperationsEnabled}"/>
                             <TextBox Grid.Column="1"
-                                     Text="GetAll"
+                                     Text="{Binding GetAllFunctionName, UpdateSourceTrigger=LostFocus}"
                                      Padding="8,4"
                                      HorizontalAlignment="Stretch"
                                      IsEnabled="{Binding IsChecked, ElementName=GetAllCheckBox}"/>
