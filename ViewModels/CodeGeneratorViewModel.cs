@@ -123,7 +123,7 @@ namespace Code_Generatore.ViewModels
 
         public ICommand GenerateCommand { get; }
 
-        public bool CanGenerate => !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder);
+        public bool CanGenerate => !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation;
 
         public string PreviewCode
         {
@@ -146,6 +146,8 @@ namespace Code_Generatore.ViewModels
 
                 _insertSelected = value;
                 OnPropertyChanged(nameof(InsertSelected));
+                OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
+                OnPropertyChanged(nameof(CanGenerate));
 
                 RefreshPreview(); 
             }
@@ -171,6 +173,8 @@ namespace Code_Generatore.ViewModels
 
                 _updateSelected = value;
                 OnPropertyChanged(nameof(UpdateSelected));
+                OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
+                OnPropertyChanged(nameof(CanGenerate));
 
                 RefreshPreview(); 
             }
@@ -196,6 +200,8 @@ namespace Code_Generatore.ViewModels
 
                 _deleteSelected = value;
                 OnPropertyChanged(nameof(DeleteSelected));
+                OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
+                OnPropertyChanged(nameof(CanGenerate));
 
                 RefreshPreview(); 
             }
@@ -220,7 +226,9 @@ namespace Code_Generatore.ViewModels
                 if (_getByIdSelected == value) return;
 
                 _getByIdSelected = value;
-                OnPropertyChanged(nameof(GetByIdSelected)); 
+                OnPropertyChanged(nameof(GetByIdSelected));
+                OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
+                OnPropertyChanged(nameof(CanGenerate));
 
                 RefreshPreview();
             }
@@ -247,6 +255,8 @@ namespace Code_Generatore.ViewModels
 
                 _getAllSelected = value;
                 OnPropertyChanged(nameof(GetAllSelected));
+                OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
+                OnPropertyChanged(nameof(CanGenerate));
 
                 RefreshPreview();
             }
@@ -277,8 +287,12 @@ namespace Code_Generatore.ViewModels
 
                 OnPropertyChanged(nameof(HasSelectedTable));
                 OnPropertyChanged(nameof(AreOperationsEnabled));
+                OnPropertyChanged(nameof(CanGenerate));
             }
         }
+
+        public bool HasSelectedAtLeastOneOperation =>
+            InsertSelected || UpdateSelected || DeleteSelected || GetByIdSelected || GetAllSelected;
 
         public CodeGeneratorViewModel(ConnectionSession session)
         {
