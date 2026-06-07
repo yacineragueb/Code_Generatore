@@ -356,22 +356,9 @@ namespace Code_Generatore.ViewModels
             preview.AppendLine("// ==============================");
             preview.AppendLine();
 
-            string insertFnName = IsEmpty(InsertFunctionName) ? INSERT_FN_NAME : InsertFunctionName;
-            string updateFnName = IsEmpty(UpdateFunctionName) ? UPDATE_FN_NAME : UpdateFunctionName;
-            string deleteFnName = IsEmpty(DeleteFunctionName) ? DELETE_FN_NAME : DeleteFunctionName;
-            string getByIdFnName = IsEmpty(GetByIdFunctionName) ? GET_BY_ID_FN_NAME : GetByIdFunctionName;
-            string getAllFnName = IsEmpty(GetAllFunctionName) ? GET_ALL_FN_NAME : GetAllFunctionName;
+            GenerationOptions options = BuildGenerationOptions();
 
-            var functionNames = new FunctionNames(insertFnName, updateFnName, deleteFnName, getByIdFnName, getAllFnName);
-
-            preview.Append(generator.Generate(
-                insert: InsertSelected,
-                update: UpdateSelected,
-                delete: DeleteSelected,
-                getById: GetByIdSelected,
-                getAll: GetAllSelected,
-                functionNames
-            ));
+            preview.Append(generator.Generate(options));
 
             PreviewCode = preview.ToString();
         }
@@ -382,9 +369,11 @@ namespace Code_Generatore.ViewModels
                 ? "WinForms" 
                 : "WPF";
 
+            List<TableItem> selectedTables = Tables.Where(table => table.IsSelected).ToList();
 
+            GenerationOptions options = BuildGenerationOptions();
 
-            CodeGeneratoreEngine generatoreEngine = new CodeGeneratoreEngine(ProjectName, OutputFolder, SelectedProjectType);
+            CodeGeneratoreEngine generatoreEngine = new CodeGeneratoreEngine(Session, SelectedDatabase, ProjectName, OutputFolder, SelectedProjectType, selectedTables, options);
 
             if(generatoreEngine.Generate())
             {
@@ -483,6 +472,24 @@ namespace Code_Generatore.ViewModels
             OnPropertyChanged(nameof(GetByIdFunctionName));
             OnPropertyChanged(nameof(GetAllFunctionName));
         }
+
+        private FunctionNames BuildFunctionNames() => new FunctionNames(
+            IsEmpty(InsertFunctionName) ? INSERT_FN_NAME : InsertFunctionName,
+            IsEmpty(UpdateFunctionName) ? UPDATE_FN_NAME : UpdateFunctionName,
+            IsEmpty(DeleteFunctionName) ? DELETE_FN_NAME : DeleteFunctionName,
+            IsEmpty(GetByIdFunctionName) ? GET_BY_ID_FN_NAME : GetByIdFunctionName,
+            IsEmpty(GetAllFunctionName) ? GET_ALL_FN_NAME : GetAllFunctionName
+        );
+
+        private GenerationOptions BuildGenerationOptions() => new GenerationOptions
+        {
+            Insert = InsertSelected,
+            Update = UpdateSelected,
+            Delete = DeleteSelected,
+            GetById = GetByIdSelected,
+            GetAll = GetAllSelected,
+            FunctionNames = BuildFunctionNames(),
+        };
 
         public void OnPropertyChanged(string name)
         {
