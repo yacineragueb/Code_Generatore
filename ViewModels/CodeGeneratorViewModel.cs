@@ -21,6 +21,7 @@ namespace Code_Generatore.ViewModels
         private bool _hasSelectedTable = false;
         private bool _isResetting = false;
         private CancellationTokenSource? _previewCts;
+        private ProjectGeneratore.enProjectType _selectedProjectType;
 
         private bool _insertSelected;
         private bool _updateSelected;
@@ -294,6 +295,18 @@ namespace Code_Generatore.ViewModels
         public bool HasSelectedAtLeastOneOperation =>
             InsertSelected || UpdateSelected || DeleteSelected || GetByIdSelected || GetAllSelected;
 
+        public ProjectGeneratore.enProjectType SelectedProjectType
+        {
+            get => _selectedProjectType;
+            set
+            {
+                if(value == _selectedProjectType) return;
+
+                _selectedProjectType = value;
+                OnPropertyChanged(nameof(SelectedProjectType));
+            }
+        }
+
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
@@ -365,7 +378,21 @@ namespace Code_Generatore.ViewModels
 
         private void GenerateCode(object? paramater)
         {
-            throw new NotImplementedException();
+            string selectedProjectName = SelectedProjectType == ProjectGeneratore.enProjectType.WINDOWS_FORMS 
+                ? "WinForms" 
+                : "WPF";
+
+
+
+            CodeGeneratoreEngine generatoreEngine = new CodeGeneratoreEngine(ProjectName, OutputFolder, SelectedProjectType);
+
+            if(generatoreEngine.Generate())
+            {
+                MessageBox.Show($"{selectedProjectName} Project has generated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            } else
+            {
+                MessageBox.Show($"Failed to generate {selectedProjectName} Project.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Browse(object? paramter)

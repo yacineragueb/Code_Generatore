@@ -5,11 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Code_Generatore"
         xmlns:userControl="clr-namespace:Code_Generatore.UserControls"
+        xmlns:conv="clr-namespace:Code_Generatore.Converters"
         mc:Ignorable="d"
         Title="Code generatore" MinHeight="500" MinWidth="1000"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed" Height="700">
+
+    <Window.Resources>
+        <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -316,7 +321,7 @@
 
             <!-- Project output folder selector -->
             <StackPanel Grid.Row="2">
-                <Label Content="Output folder:" Foreground="White" />
+                <Label Content="Project folder:" Foreground="White" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -348,7 +353,7 @@
 
                     <!-- WPF Option -->
                     <RadioButton x:Name="WpfRadio"
-                                 IsChecked="True"
+                                 IsChecked="{Binding SelectedProjectType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=WINDOWS_PRESENTATION_FOUNDATION}"
                                  Style="{StaticResource ProjectTypeRadioStyle}"
                                  Tag="M240-320h360v-200H240v200Zm420-120h60v-200H360v60h300v140ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z">
                         <StackPanel>
@@ -362,6 +367,7 @@
 
                     <!-- WinForms Option -->
                     <RadioButton x:Name="WinFormsRadio"
+                                 IsChecked="{Binding SelectedProjectType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=WINDOWS_FORMS}"
                                  Style="{StaticResource ProjectTypeRadioStyle}"
                                  Tag="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Z">
                         <StackPanel>
