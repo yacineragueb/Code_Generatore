@@ -1,8 +1,6 @@
-# Build results
-/bin
-/obj
+**/bin/
+**/obj/
+**/.vs/
 
-# Visual Studio settings
-.vs
-*.user
-*.suo
+**/*.user
+**/*.suo
