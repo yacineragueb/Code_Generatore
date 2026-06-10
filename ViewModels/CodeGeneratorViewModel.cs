@@ -347,7 +347,7 @@ namespace Code_Generatore.ViewModels
 
             if (ct.IsCancellationRequested) return; // stale, discard
 
-            var generator = new PreviewGenerator(tableName, columns);
+            var generator = new BLLGenerator(tableName, columns);
 
             var preview = new StringBuilder();
 
