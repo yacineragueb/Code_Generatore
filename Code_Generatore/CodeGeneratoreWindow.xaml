@@ -181,6 +181,11 @@
                     <StackPanel Grid.Row="1"
                                 Margin="{StaticResource MarginSize}"
                                 Orientation="Vertical">
+                        
+                        <CheckBox Margin="{StaticResource MarginSize}" 
+                                  Content="Select all" 
+                                  IsEnabled="{Binding CanSelectAllOperations}"
+                                  IsChecked="{Binding AreAllOperationsChecked}"/>
 
                         <!-- Insert -->
                         <Grid Margin="{StaticResource MarginSize}">

@@ -68,6 +68,8 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(CanGenerate));
                 OnPropertyChanged(nameof(AreOperationsEnabled));
                 OnPropertyChanged(nameof(AreAllTablesSelected));
+                OnPropertyChanged(nameof(CanSelectAllOperations));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
             }
         }
 
@@ -122,6 +124,28 @@ namespace Code_Generatore.ViewModels
 
         public bool CanSelectAllTables => !IsEmpty(SelectedDatabase) && Tables.Count > 0;
 
+        public bool CanSelectAllOperations => AreOperationsEnabled;
+
+        public bool AreAllOperationsChecked
+        {
+            get => InsertSelected && UpdateSelected && DeleteSelected && GetByIdSelected && GetAllSelected;
+            set
+            {
+                _isResetting = true;
+
+                InsertSelected = value;
+                UpdateSelected = value;
+                DeleteSelected= value;
+                GetByIdSelected = value;
+                GetAllSelected = value;
+
+                _isResetting = false;
+
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
+                RefreshPreview();
+            }
+        }
+
         public ICommand GenerateCommand { get; }
 
         public bool CanGenerate => !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation;
@@ -149,6 +173,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(InsertSelected));
                 OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
 
                 RefreshPreview(); 
             }
@@ -176,6 +201,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(UpdateSelected));
                 OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
 
                 RefreshPreview(); 
             }
@@ -203,6 +229,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(DeleteSelected));
                 OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
 
                 RefreshPreview(); 
             }
@@ -230,6 +257,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(GetByIdSelected));
                 OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
 
                 RefreshPreview();
             }
@@ -258,6 +286,7 @@ namespace Code_Generatore.ViewModels
                 OnPropertyChanged(nameof(GetAllSelected));
                 OnPropertyChanged(nameof(HasSelectedAtLeastOneOperation));
                 OnPropertyChanged(nameof(CanGenerate));
+                OnPropertyChanged(nameof(AreAllOperationsChecked));
 
                 RefreshPreview();
             }
@@ -288,6 +317,7 @@ namespace Code_Generatore.ViewModels
 
                 OnPropertyChanged(nameof(HasSelectedTable));
                 OnPropertyChanged(nameof(AreOperationsEnabled));
+                OnPropertyChanged(nameof(CanSelectAllOperations));
                 OnPropertyChanged(nameof(CanGenerate));
             }
         }
@@ -426,6 +456,7 @@ namespace Code_Generatore.ViewModels
                         ResetCRUDOperationsfunctionNames();
 
                         OnPropertyChanged(nameof(AreAllTablesSelected));
+                        OnPropertyChanged(nameof(AreAllOperationsChecked));
                         RefreshPreview();
                     }
                 };
