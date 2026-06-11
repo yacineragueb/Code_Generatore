@@ -123,28 +123,27 @@ namespace Code_Generatore.Lib
         }
 
         /// <summary>
-        /// Writes the specified source code content to a file.
-        /// If the file does not exist, it is created. If it already exists,
-        /// its contents are overwritten.
+        /// Asynchronously writes the specified code content to a file.
+        /// Creates the file if it does not exist; otherwise, overwrites the existing content.
         /// </summary>
         /// <param name="code">
-        /// The code or text content to write to the file.
+        /// The source code or text content to write.
         /// </param>
         /// <param name="filePath">
-        /// The full path of the file where the code will be written.
+        /// The path of the destination file.
         /// </param>
         /// <returns>
-        /// <see langword="true"/> if the code is successfully written to the file;
+        /// A task that returns <see langword="true"/> if the operation completes successfully;
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public static bool WriteCodeToFile(string code, string filePath)
+        public static async Task<bool> WriteCodeToFileAsync(string code, string filePath)
         {
             try
             {
-                File.WriteAllText(filePath, code);
+                await File.WriteAllTextAsync(filePath, code);
                 return true;
             }
-            catch
+            catch (Exception) 
             {
                 return false;
             }

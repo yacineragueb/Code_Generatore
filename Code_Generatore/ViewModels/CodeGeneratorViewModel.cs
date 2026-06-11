@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static Code_Generatore.Lib.Utility;
@@ -22,6 +23,7 @@ namespace Code_Generatore.ViewModels
         private bool _isResetting = false;
         private CancellationTokenSource? _previewCts;
         private ProjectGeneratore.enProjectType _selectedProjectType;
+        private bool _isGenerating = false;
 
         private bool _insertSelected;
         private bool _updateSelected;
@@ -148,7 +150,21 @@ namespace Code_Generatore.ViewModels
 
         public ICommand GenerateCommand { get; }
 
-        public bool CanGenerate => !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation;
+        public bool CanGenerate => !IsGenerating && !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation;
+
+        public bool IsGenerating
+        {
+            get => _isGenerating;
+            set
+            {
+                if (_isGenerating == value) return;
+
+                _isGenerating = value;
+
+                OnPropertyChanged(nameof(IsGenerating));
+                OnPropertyChanged(nameof(CanGenerate));
+            }
+        }
 
         public string PreviewCode
         {
@@ -393,8 +409,10 @@ namespace Code_Generatore.ViewModels
             PreviewCode = preview.ToString();
         }
 
-        private void GenerateCode(object? paramater)
+        private async void GenerateCode(object? paramater)
         {
+            IsGenerating = true;
+
             string selectedProjectName = SelectedProjectType == ProjectGeneratore.enProjectType.WINDOWS_FORMS 
                 ? "WinForms" 
                 : "WPF";
@@ -405,7 +423,11 @@ namespace Code_Generatore.ViewModels
 
             CodeGeneratoreEngine generatoreEngine = new CodeGeneratoreEngine(Session, SelectedDatabase, ProjectName, OutputFolder, SelectedProjectType, selectedTables, options);
 
-            if(generatoreEngine.Generate())
+            bool success = await generatoreEngine.GenerateAsync();
+
+            IsGenerating = false;
+
+            if (success)
             {
                 MessageBox.Show($"{selectedProjectName} Project has generated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             } else

@@ -5,8 +5,7 @@ namespace Code_Generatore.BusinessLayer
 {
     public class CodeGeneratoreEngine
     {
-        private DatabaseService _dbService;
-        private ConnectionSession _session;
+        private readonly ConnectionSession _session;
 
         public string DatabaseName { get; set; }
         public string ProjectName { get; set; }
@@ -24,11 +23,9 @@ namespace Code_Generatore.BusinessLayer
             ProjectType = projectType;
             SelectedTables = selectedTables;
             GenerationOptions = generationOptions;
-
-            _dbService = new DatabaseService();
         }
 
-        public bool Generate()
+        public async Task<bool> GenerateAsync()
         {
             GeneratedProjectInfo projectInfo = ProjectGeneratore.GenerateProject(ProjectName, ProjectFolderPath, ProjectType);
 
@@ -37,28 +34,32 @@ namespace Code_Generatore.BusinessLayer
                 return false;
             }
 
-            return GenerateBLLAndDALFiles(projectInfo);
-        }
-
-        private bool GenerateBLLAndDALFiles(GeneratedProjectInfo projectInfo)
-        {
-            foreach (TableItem table in SelectedTables)
-            {
-                List<ColumnInfo> columns = _dbService.GetTableColumns(_session, DatabaseName, table.TableName);
-
-                if(columns == null || columns.Count == 0)
-                {
-                    return false;
-                }
-
-                GenerateBLLFileForTable(table.TableName, columns, projectInfo);
-                GenerateDALFileForTable(table.TableName, columns, projectInfo);
-            }
-
+            await GenerateBLLAndDALFilesAsync(projectInfo);
             return true;
         }
 
-        private void GenerateBLLFileForTable(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
+        private async Task GenerateBLLAndDALFilesAsync(GeneratedProjectInfo projectInfo)
+        {
+            var dbService = new DatabaseService();
+
+            // Fetch all columns in parallel
+            var tasks = SelectedTables.Select(table => Task.Run(() => new
+            {
+                table.TableName,
+                Columns = dbService.GetTableColumns(_session, DatabaseName, table.TableName)
+            }));
+
+            var results = await Task.WhenAll(tasks);
+
+            var writeTask = results.Select(result => Task.WhenAll(
+                 GenerateBLLFileForTableAsync(result.TableName, result.Columns, projectInfo),
+                 GenerateDALFileForTableAsync(result.TableName, result.Columns, projectInfo)
+            ));
+
+            await Task.WhenAll(writeTask);
+        }
+
+        private async Task GenerateBLLFileForTableAsync(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
         {
             var generatore = new BLLGenerator(tableName, tableColumns);
 
@@ -66,18 +67,18 @@ namespace Code_Generatore.BusinessLayer
 
             string filePath = Path.Combine(projectInfo.BusinessLogicLayerPath, $"{tableName}.cs");
 
-            Utility.WriteCodeToFile(generatedCode, filePath);
+            await Utility.WriteCodeToFileAsync(generatedCode, filePath);
         }
 
-        private void GenerateDALFileForTable(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
+        private async Task GenerateDALFileForTableAsync(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
         {
             var generatore = new DALGenerator(tableName, tableColumns);
 
             string generatedCode = generatore.Generate(GenerationOptions);
 
-            string filePath = Path.Combine(projectInfo.DataAccessLayerPath, $"{tableName + "Data"}.cs");
+            string filePath = Path.Combine(projectInfo.DataAccessLayerPath, $"{tableName}Data.cs");
 
-            Utility.WriteCodeToFile(generatedCode, filePath);
+            await Utility.WriteCodeToFileAsync(generatedCode, filePath);
         }
     }
 }
