@@ -1,4 +1,5 @@
-﻿using Code_Generatore.Lib;
+﻿using Code_Generatore.AccessDataLayer;
+using Code_Generatore.Lib;
 
 namespace Code_Generatore.BusinessLayer
 {
@@ -7,14 +8,12 @@ namespace Code_Generatore.BusinessLayer
         private DatabaseService _dbService;
         private ConnectionSession _session;
 
-        public string DatabaseName;
+        public string DatabaseName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectFolderPath { get; set; }
         public List<TableItem> SelectedTables { get; set; }
         public ProjectGeneratore.enProjectType ProjectType { get; set; }
         public GenerationOptions GenerationOptions { get; set; }
-
-        private GeneratedProjectInfo _projectInfo;
 
         public CodeGeneratoreEngine(ConnectionSession session, string databaseName, string projectName, string projectFolderPath, ProjectGeneratore.enProjectType projectType, List<TableItem> selectedTables, GenerationOptions generationOptions)
         {
@@ -31,59 +30,54 @@ namespace Code_Generatore.BusinessLayer
 
         public bool Generate()
         {
-            _projectInfo = ProjectGeneratore.GenerateProject(ProjectName, ProjectFolderPath, ProjectType);
+            GeneratedProjectInfo projectInfo = ProjectGeneratore.GenerateProject(ProjectName, ProjectFolderPath, ProjectType);
 
-            if (_projectInfo == null)
+            if (projectInfo == null)
             {
                 return false;
             }
 
-            GenerateBLLFiles();
-            GenerateDALFiles();
+            return GenerateBLLAndDALFiles(projectInfo);
+        }
+
+        private bool GenerateBLLAndDALFiles(GeneratedProjectInfo projectInfo)
+        {
+            foreach (TableItem table in SelectedTables)
+            {
+                List<ColumnInfo> columns = _dbService.GetTableColumns(_session, DatabaseName, table.TableName);
+
+                if(columns == null || columns.Count == 0)
+                {
+                    return false;
+                }
+
+                GenerateBLLFileForTable(table.TableName, columns, projectInfo);
+                GenerateDALFileForTable(table.TableName, columns, projectInfo);
+            }
 
             return true;
         }
 
-        private void GenerateBLLFiles()
+        private void GenerateBLLFileForTable(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
         {
-            foreach (TableItem table in SelectedTables)
-            {
-                GenerateBLLFileForTable(table.TableName);
-            }
+            var generatore = new BLLGenerator(tableName, tableColumns);
+
+            string generatedCode = generatore.Generate(GenerationOptions);
+
+            string filePath = Path.Combine(projectInfo.BusinessLogicLayerPath, $"{tableName}.cs");
+
+            Utility.WriteCodeToFile(generatedCode, filePath);
         }
 
-        private void GenerateDALFiles()
+        private void GenerateDALFileForTable(string tableName, List<ColumnInfo> tableColumns, GeneratedProjectInfo projectInfo)
         {
-            foreach (TableItem table in SelectedTables)
-            {
-                GenerateDALFileForTable(table.TableName);
-            }
-        }
+            var generatore = new DALGenerator(tableName, tableColumns);
 
-        private void GenerateBLLFileForTable(string tableName)
-        {
-            var columns = _dbService.GetTableColumns(_session, DatabaseName, tableName);
+            string generatedCode = generatore.Generate(GenerationOptions);
 
-            var generatore = new BLLGenerator(tableName, columns);
+            string filePath = Path.Combine(projectInfo.DataAccessLayerPath, $"{tableName + "Data"}.cs");
 
-            string code = generatore.Generate(GenerationOptions);
-
-            string filePath = Path.Combine(_projectInfo.BusinessLogicLayerPath, $"{tableName}.cs");
-
-            Utility.WriteCodeToFile(code, filePath);
-        }
-
-        private void GenerateDALFileForTable(string tableName)
-        {
-            var columns = _dbService.GetTableColumns(_session, DatabaseName, tableName);
-
-            var generatore = new DALGenerator(tableName, columns);
-
-            string code = generatore.Generate(GenerationOptions);
-
-            string filePath = Path.Combine(_projectInfo.DataAccessLayerPath, $"{tableName + "Data"}.cs");
-
-            Utility.WriteCodeToFile(code, filePath);
+            Utility.WriteCodeToFile(generatedCode, filePath);
         }
     }
 }

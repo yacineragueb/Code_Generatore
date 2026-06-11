@@ -37,6 +37,7 @@ namespace Code_Generatore.BusinessLayer
             var templateText = """
             using System;
             using System.Collections.Generic;
+            using GeneratedDataAccessLayer;
 
             namespace GeneratedBusinessLogicLayer
             {
