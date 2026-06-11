@@ -167,6 +167,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Header -->
@@ -285,7 +286,13 @@
 
                     <Separator Grid.Row="2"/>
 
-                    <Button x:Name="GenerateBtn" Grid.Row="3"
+                    <TextBlock Grid.Row="3" Style="{StaticResource DescriptionText}" 
+                               TextWrapping="Wrap"
+                               Margin="{StaticResource MarginSize}">
+                            <Bold>Note:</Bold> Use the <Bold>Preview Window</Bold> to generate and inspect code for a specific table. To generate all files and create the complete project, click the <Bold>Generate</Bold> button below.
+                    </TextBlock>
+
+                    <Button x:Name="GenerateBtn" Grid.Row="4"
                             Style="{StaticResource PrimaryBtn}"
                             Content="Generate"
                             IsEnabled="{Binding CanGenerate}"
