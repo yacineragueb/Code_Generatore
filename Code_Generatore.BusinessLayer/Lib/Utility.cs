@@ -150,7 +150,7 @@ namespace Code_Generatore.Lib
         }
 
         /// <summary>
-        /// Executes an external command-line process and waits for it to complete.
+        /// Executes an external command-line process asynchronously and waits for its completion.
         /// </summary>
         /// <param name="fileName">
         /// The executable or command to run (e.g., "dotnet", "cmd.exe").
@@ -164,10 +164,10 @@ namespace Code_Generatore.Lib
         /// <remarks>
         /// The process is executed without creating a console window. Standard output
         /// and standard error streams are redirected. This method blocks the calling
-        /// thread until the process exits.
+        /// thread until the process exits and throws an exception if the process fails (non-zero exit code).
         /// </remarks>
         /// <exception cref="InvalidOperationException" />
-        public static void RunCommand(string fileName, string arguments, string workingDirectory)
+        public static async Task RunCommandAsync(string fileName, string arguments, string workingDirectory)
         {
             using Process process = new()
             {
@@ -186,11 +186,25 @@ namespace Code_Generatore.Lib
             try
             {
                 process.Start();
-                process.WaitForExit();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new InvalidOperationException(
-                    $"Failed to execute command '{fileName} {arguments}'.", ex);
+                    $"Failed to start process '{fileName}'.", ex);
+            }
+
+            Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+
+            await Task.WhenAll(stdoutTask, stderrTask);
+            await process.WaitForExitAsync();
+
+            if (process.ExitCode != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Command failed.\n" +
+                    $"Exit Code: {process.ExitCode}\n" +
+                    $"Error: {stderrTask}");
             }
         }
     }

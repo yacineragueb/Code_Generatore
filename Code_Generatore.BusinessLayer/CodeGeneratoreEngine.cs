@@ -27,7 +27,7 @@ namespace Code_Generatore.BusinessLayer
 
         public async Task<bool> GenerateAsync()
         {
-            GeneratedProjectInfo projectInfo = ProjectGeneratore.GenerateProject(ProjectName, ProjectFolderPath, ProjectType);
+            GeneratedProjectInfo projectInfo = await ProjectGeneratore.GenerateProjectAsync(ProjectName, ProjectFolderPath, ProjectType);
 
             if (projectInfo == null)
             {

@@ -43,7 +43,7 @@ namespace Code_Generatore.BusinessLayer
 
                 namespace GeneratedDataAccessLayer
                 {
-                    public class {{ DataClass }}
+                    public partial class {{ DataClass }}
                     {
                         private static readonly string _connectionString = new ConfigurationBuilder()
                             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
