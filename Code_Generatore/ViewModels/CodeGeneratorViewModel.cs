@@ -13,7 +13,7 @@ namespace Code_Generatore.ViewModels
     public class CodeGeneratorViewModel : INotifyPropertyChanged
     {
         private readonly ConnectionSession _session;
-        private DatabaseService _databaseService;
+        private DatabaseService _dbService;
         private string _selectedDatabase = string.Empty;
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
@@ -385,11 +385,11 @@ namespace Code_Generatore.ViewModels
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
-            _databaseService = new DatabaseService();
-            DatabasesList = _databaseService.GetAllDatabases(_session);
+            _dbService = new DatabaseService();
+            DatabasesList = _dbService.GetAllDatabases(_session); // I stop here, make this function Async
             BrowseCommand = new RelayCommand(Browse);
             CopyPreviewCommand = new RelayCommand(_ => Clipboard.SetText(PreviewCode));
-            GenerateCommand = new RelayCommand(GenerateCode);
+            GenerateCommand = new AsyncRelayCommand(GenerateCodeAsync, _ => CanGenerate);
         }
 
         private void RefreshPreview()
@@ -417,8 +417,8 @@ namespace Code_Generatore.ViewModels
 
         private async Task RefreshPreviewAsync(string tableName, CancellationToken ct)
         {
-            var columns = await Task.Run(() => 
-                _databaseService.GetTableColumns(Session, SelectedDatabase, tableName), ct);
+            var columns = await Task.Run(() =>
+                _dbService.GetTableColumns(Session, SelectedDatabase, tableName), ct);
 
             if (ct.IsCancellationRequested) return; // stale, discard
 
@@ -438,7 +438,7 @@ namespace Code_Generatore.ViewModels
             PreviewCode = preview.ToString();
         }
 
-        private async void GenerateCode(object? paramater)
+        private async Task GenerateCodeAsync(object? paramater)
         {
             IsGenerating = true;
 
@@ -452,16 +452,25 @@ namespace Code_Generatore.ViewModels
 
             CodeGeneratoreEngine generatoreEngine = new CodeGeneratoreEngine(Session, SelectedDatabase, ProjectName, OutputFolder, SelectedProjectType, selectedTables, options);
 
-            bool success = await generatoreEngine.GenerateAsync();
-
-            IsGenerating = false;
-
-            if (success)
+            try
             {
-                MessageBox.Show($"{selectedProjectName} Project has generated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            } else
+                bool success = await generatoreEngine.GenerateAsync();
+
+                IsGenerating = false;
+
+                if (success)
+                {
+                    MessageBox.Show($"{selectedProjectName} Project has generated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show($"Failed to generate {selectedProjectName} Project.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex)
             {
-                MessageBox.Show($"Failed to generate {selectedProjectName} Project.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                IsGenerating = false;
+                MessageBox.Show("Unexpected error: " + ex.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -487,7 +496,7 @@ namespace Code_Generatore.ViewModels
                 return;
 
             List<string> tableNames =
-                _databaseService.GetAllTables(_session, SelectedDatabase);
+                _dbService.GetAllTables(_session, SelectedDatabase);
 
             foreach (string tableName in tableNames)
             {

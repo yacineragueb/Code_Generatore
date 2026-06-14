@@ -23,11 +23,11 @@ namespace Code_Generatore.BusinessLayer
             return builder.ConnectionString;
         }
 
-        public ConnectionSession Login(string username, string password)
+        public async Task<ConnectionSession> LoginAsync(string username, string password)
         {
             string connectionString = BuildConnectionString(_server, username, password);
 
-            bool ok = DatabaseServiceData.TestConnection(connectionString);
+            bool ok = await DatabaseServiceData.TestConnectionAsync(connectionString);
 
             if (!ok)
                 throw new DatabaseConnectionException($"Could not connect to '{_server}'. Check credentials and server availability.");

@@ -15,6 +15,7 @@ namespace Code_Generatore.ViewModels
         private bool _rememberMe;
         private string _errorMessage = string.Empty;
         private bool _hasError;
+        private readonly DatabaseService _dbService;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -23,8 +24,13 @@ namespace Code_Generatore.ViewModels
             get => _username;
             set
             {
+                if (_username == value)
+                    return;
+
                 _username = value;
                 OnPropertyChanged(nameof(Username));
+
+                ((AsyncRelayCommand)LoginCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -33,8 +39,13 @@ namespace Code_Generatore.ViewModels
             get => _password;
             set
             {
+                if (_password == value)
+                    return;
+
                 _password = value;
                 OnPropertyChanged(nameof(Password));
+
+                ((AsyncRelayCommand)LoginCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -74,12 +85,14 @@ namespace Code_Generatore.ViewModels
 
         public LoginViewModel()
         {
-            LoginCommand = new RelayCommand(Login);
+            _dbService = new DatabaseService();
+
+            LoginCommand = new AsyncRelayCommand(LoginAsync, _ => Utility.AreCredentialsProvided(Username, Password));
 
             LoadCredentials();
         }
 
-        private void Login(object? paramter)
+        private async Task LoginAsync(object? paramter)
         {
             if (!Utility.AreCredentialsProvided(Username, Password))
             {
@@ -91,9 +104,7 @@ namespace Code_Generatore.ViewModels
 
             try
             {
-                DatabaseService dbService = new DatabaseService();
-
-                ConnectionSession session = dbService.Login(Username, Password);
+                ConnectionSession session = await _dbService.LoginAsync(Username, Password);
 
                 if (RememberMe)
                 {

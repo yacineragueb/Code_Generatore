@@ -30,25 +30,21 @@ namespace Code_Generatore.AccessDataLayer
             return databases;
         }
 
-        public static bool TestConnection(string ConnectionString)
+        public static async Task<bool> TestConnectionAsync(string ConnectionString)
         {
-            bool isConnected = false;
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(ConnectionString))
                 {
-                    conn.Open();
+                    await conn.OpenAsync();
 
-                    isConnected = true;
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                isConnected = false;
+                return false;
             }
-
-            return isConnected;
         }
     
         public static List<string> GetAllTables(string connectionString, string databaseName)
