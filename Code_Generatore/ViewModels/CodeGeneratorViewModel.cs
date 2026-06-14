@@ -23,6 +23,8 @@ namespace Code_Generatore.ViewModels
         private CancellationTokenSource? _previewCts;
         private ProjectGeneratore.enProjectType _selectedProjectType;
         private bool _isGenerating = false;
+        private bool _bllSelected = true;
+        private bool _dalSelected = true;
 
         private bool _insertSelected;
         private bool _updateSelected;
@@ -149,7 +151,7 @@ namespace Code_Generatore.ViewModels
 
         public ICommand GenerateCommand { get; }
 
-        public bool CanGenerate => !IsGenerating && !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation;
+        public bool CanGenerate => !IsGenerating && !IsEmpty(SelectedDatabase) && !IsEmpty(ProjectName) && !IsEmpty(OutputFolder) && HasSelectedTable && HasSelectedAtLeastOneOperation && (BLLSelected || DALSelected);
 
         public bool IsGenerating
         {
@@ -352,6 +354,34 @@ namespace Code_Generatore.ViewModels
             }
         }
 
+        public bool BLLSelected
+        {
+            get => _bllSelected;
+            set
+            {
+                if(_bllSelected == value) return;
+
+                _bllSelected = value;
+
+                OnPropertyChanged(nameof(BLLSelected));
+                OnPropertyChanged(nameof(CanGenerate));
+            }
+        }
+
+        public bool DALSelected
+        {
+            get => _dalSelected;
+            set
+            {
+                if (_dalSelected == value) return;
+
+                _dalSelected = value;
+
+                OnPropertyChanged(nameof(DALSelected));
+                OnPropertyChanged(nameof(CanGenerate));
+            }
+        }
+
         public CodeGeneratorViewModel(ConnectionSession session)
         {
             _session = session;
@@ -541,6 +571,8 @@ namespace Code_Generatore.ViewModels
             GetById = GetByIdSelected,
             GetAll = GetAllSelected,
             FunctionNames = BuildFunctionNames(),
+            Layers = (BLLSelected ? GenerationOptions.enGeneratedLayers.BLL : GenerationOptions.enGeneratedLayers.None)
+            | (DALSelected ? GenerationOptions.enGeneratedLayers.DAL : GenerationOptions.enGeneratedLayers.None),
         };
 
         public void OnPropertyChanged(string name)

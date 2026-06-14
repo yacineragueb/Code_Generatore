@@ -27,7 +27,7 @@ namespace Code_Generatore.BusinessLayer
 
         public async Task<bool> GenerateAsync()
         {
-            GeneratedProjectInfo projectInfo = await ProjectGeneratore.GenerateProjectAsync(ProjectName, ProjectFolderPath, ProjectType);
+            GeneratedProjectInfo projectInfo = await ProjectGeneratore.GenerateProjectAsync(ProjectName, ProjectFolderPath, ProjectType, GenerationOptions);
 
             if (projectInfo == null)
             {
@@ -51,10 +51,22 @@ namespace Code_Generatore.BusinessLayer
 
             var results = await Task.WhenAll(tasks);
 
-            var writeTask = results.Select(result => Task.WhenAll(
-                 GenerateBLLFileForTableAsync(result.TableName, result.Columns, projectInfo),
-                 GenerateDALFileForTableAsync(result.TableName, result.Columns, projectInfo)
-            ));
+            var writeTask = results.Select(result =>
+            {
+                var tasks = new List<Task>();
+
+                if (GenerationOptions.Layers.HasFlag(GenerationOptions.enGeneratedLayers.BLL))
+                {
+                    tasks.Add(GenerateBLLFileForTableAsync(result.TableName, result.Columns, projectInfo));
+                }
+
+                if(GenerationOptions.Layers.HasFlag(GenerationOptions.enGeneratedLayers.DAL))
+                {
+                    tasks.Add(GenerateDALFileForTableAsync(result.TableName, result.Columns, projectInfo));
+                }
+
+                return Task.WhenAll(tasks);
+            });
 
             await Task.WhenAll(writeTask);
         }

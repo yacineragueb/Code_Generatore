@@ -398,7 +398,7 @@
                 <Label Content="Architecture:" Foreground="White" />
                 <!-- DAL Card -->
                 <CheckBox Style="{StaticResource DalCheckBoxStyle}"
-                          IsChecked="True">
+                          IsChecked="{Binding DALSelected}">
                     <StackPanel>
                         <TextBlock Text="Data Access Layer"
                                    FontWeight="SemiBold"
@@ -413,7 +413,7 @@
 
                 <!-- BLL Card -->
                 <CheckBox Style="{StaticResource BllCheckBoxStyle}"
-                          IsChecked="True">
+                          IsChecked="{Binding BLLSelected}">
                     <StackPanel>
                         <TextBlock Text="Business Logic Layer"
                                    FontWeight="SemiBold"

@@ -14,7 +14,7 @@ namespace Code_Generatore.BusinessLayer
             WINDOWS_FORMS = 1,
         }
 
-        public static async Task<GeneratedProjectInfo?> GenerateProjectAsync(string projectName, string projectFolderPath, enProjectType projectType)
+        public static async Task<GeneratedProjectInfo?> GenerateProjectAsync(string projectName, string projectFolderPath, enProjectType projectType, GenerationOptions options)
         {
             string template = projectType switch
             {
@@ -23,10 +23,10 @@ namespace Code_Generatore.BusinessLayer
                 _ => throw new ArgumentOutOfRangeException(nameof(projectType))
             };
 
-            return await GenerateFromTemplateAsync(projectName, projectFolderPath, template);
+            return await GenerateFromTemplateAsync(projectName, projectFolderPath, template, options);
         }
 
-        private static async Task<GeneratedProjectInfo?> GenerateFromTemplateAsync(string projectName, string projectFolderPath, string template)
+        private static async Task<GeneratedProjectInfo?> GenerateFromTemplateAsync(string projectName, string projectFolderPath, string template, GenerationOptions options)
         {
             try
             {
@@ -42,30 +42,40 @@ namespace Code_Generatore.BusinessLayer
                 // 1. Create solution
                 await Utility.RunCommandAsync("dotnet", $"new sln -n {solutionName}", projectFolderPath);
 
-                // 2. Create Presentation + BLL + DAL
-                await Task.WhenAll(
-                    // 2.1 Create Presentation project
-                    Utility.RunCommandAsync("dotnet", $"new {template} -n {projectName}", projectFolderPath),
-
-                    //2.2 Create a Class Library project for Bussiness Logic Layer
-                    Utility.RunCommandAsync("dotnet", $"new classlib -n {BLLProjectName}", projectFolderPath),
-
-                    //2.3 Create a Class Library project for Data Access Layer
-                    Utility.RunCommandAsync("dotnet", $"new classlib -n {DALProjectName}", projectFolderPath)
-                );
+                // 2. Create Presentation project
+                await Utility.RunCommandAsync("dotnet", $"new {template} -n {presentationProjectName}", projectFolderPath);
 
                 // 3. Add Presentation project to solution
-                await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{projectName}\\{projectName}.csproj\"", projectFolderPath);
+                await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{presentationProjectName}\\{presentationProjectName}.csproj\"", projectFolderPath);
 
-                //4. Add DAL & BLL projects to solution
-                await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{BLLProjectName}\\{BLLProjectName}.csproj\"", projectFolderPath);
-                await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
+                bool HasBLLFlag = options.Layers.HasFlag(GenerationOptions.enGeneratedLayers.BLL);
 
-                // 5. Add BLL reference to Presentation project
-                await Utility.RunCommandAsync("dotnet", $"add \"{presentationProjectName}\\{presentationProjectName}.csproj\" reference \"{BLLProjectName}\\{BLLProjectName}.csproj\"", projectFolderPath);
+                // 4. Create BLL project
+                if (HasBLLFlag)
+                {
+                    // 4.1 Create a Class Library project for Bussiness Logic Layer if selected
+                    await Utility.RunCommandAsync("dotnet", $"new classlib -n {BLLProjectName}", projectFolderPath);
 
-                // 6. Add DAL reference to BLL project
-                await Utility.RunCommandAsync("dotnet", $"add \"{BLLProjectName}\\{BLLProjectName}.csproj\" reference \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
+                    // 4.2 Add it to solution
+                    await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{BLLProjectName}\\{BLLProjectName}.csproj\"", projectFolderPath);
+
+                    // 4.3 Add BLL reference to Presentation project
+                    await Utility.RunCommandAsync("dotnet", $"add \"{presentationProjectName}\\{presentationProjectName}.csproj\" reference \"{BLLProjectName}\\{BLLProjectName}.csproj\"", projectFolderPath);
+                }
+
+                // 5. Create DAL project
+                if (options.Layers.HasFlag(GenerationOptions.enGeneratedLayers.DAL))
+                {
+                    // 5.1 Create a Class Library project for Data Access Layer if selected
+                    await Utility.RunCommandAsync("dotnet", $"new classlib -n {DALProjectName}", projectFolderPath);
+
+                    // 5.2 Add it to solution
+                    await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
+
+                    // 8. Add DAL reference to BLL project if and only if BLL project exist
+                    if(HasBLLFlag)
+                        await Utility.RunCommandAsync("dotnet", $"add \"{BLLProjectName}\\{BLLProjectName}.csproj\" reference \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
+                }
 
                 // TODO: Install required NuGet packages in the DAL project (Microsoft.Data.SqlClient, Microsoft.Extensions.Configuration.Json)
                 // These operations are slow (+5min each) because they hit NuGet servers and restore dependencies.
