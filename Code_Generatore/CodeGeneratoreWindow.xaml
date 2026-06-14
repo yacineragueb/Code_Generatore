@@ -14,6 +14,7 @@
 
     <Window.Resources>
         <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
     
     <Grid>
@@ -462,12 +463,30 @@
         <Grid Grid.Row="1" Grid.ColumnSpan="4" Background="{StaticResource PrimaryBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label x:Name="CurrentDateTimeTextBlock" Grid.Column="0" Foreground="White" FontWeight="Normal" FontSize="14" VerticalAlignment="Center" Margin="5" d:Content="18 May, 2026 - 13:56:20" />
+            <Label x:Name="CurrentDateTimeTextBlock" 
+                   Grid.Column="0" 
+                   Foreground="White" 
+                   FontWeight="Normal" 
+                   FontSize="{StaticResource FontSizeNormal}"
+                   VerticalAlignment="Center" 
+                   Margin="{StaticResource MarginSize}" 
+                   d:Content="18 May, 2026 - 13:56:20" />
 
-            <Button Click="DisconnectBtn_Click" Grid.Column="1" Style="{StaticResource DangerBtn}" Content="Disconnect" HorizontalAlignment="Right" />
+            <ProgressBar Grid.Column="1"
+                         IsIndeterminate="True"
+                         Visibility="{Binding IsGenerating, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Width="150"
+                         Margin="{StaticResource MarginSize}"/>
+
+            <Button Click="DisconnectBtn_Click" 
+                    Grid.Column="2" 
+                    Style="{StaticResource DangerBtn}" 
+                    Content="Disconnect" 
+                    HorizontalAlignment="Right" />
         </Grid>
         
         <!--#endregion-->
