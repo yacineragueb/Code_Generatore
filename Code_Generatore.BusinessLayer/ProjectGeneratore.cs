@@ -72,27 +72,14 @@ namespace Code_Generatore.BusinessLayer
                     // 5.2 Add it to solution
                     await Utility.RunCommandAsync("dotnet", $"sln {solutionName}.sln add \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
 
-                    // 8. Add DAL reference to BLL project if and only if BLL project exist
+                    // 5.3 Add DAL reference to BLL project if and only if BLL project exist
                     if(HasBLLFlag)
                         await Utility.RunCommandAsync("dotnet", $"add \"{BLLProjectName}\\{BLLProjectName}.csproj\" reference \"{DALProjectName}\\{DALProjectName}.csproj\"", projectFolderPath);
-                }
 
-                // TODO: Install required NuGet packages in the DAL project (Microsoft.Data.SqlClient, Microsoft.Extensions.Configuration.Json)
-                // These operations are slow (+5min each) because they hit NuGet servers and restore dependencies.
-                // They should NOT run on the UI thread — move them to a background thread to keep the UI responsive.
-                //
-                // Implementation plan:
-                //   1. Make GenerateFromTemplate async (Task<GeneratedProjectInfo?>)
-                //   2. Run the two package installs via Task.Run() or move them to a separate method InstallDALPackagesAsync()
-                //   3. Before starting: show a progress indicator (spinner or marquee ProgressBar) with a status label e.g. "Installing NuGet packages..."
-                //   4. After both finish: hide the indicator and continue
-                //
-                // Commands to run (working directory = projectFolderPath):
-                //   dotnet add "{DALProjectName}/{DALProjectName}.csproj" package Microsoft.Data.SqlClient
-                //   dotnet add "{DALProjectName}/{DALProjectName}.csproj" package Microsoft.Extensions.Configuration.Json
-                //
-                // Note: Utility.RunCommand may need an async overload (RunCommandAsync) that returns Task
-                //       so it can be properly awaited without blocking.
+                    // 5.4 Install required NuGet packages in the DAL project
+                    await Utility.RunCommandAsync("dotnet", $"add \"{DALProjectName}/{DALProjectName}.csproj\" package Microsoft.Data.SqlClient", projectFolderPath);
+                    await Utility.RunCommandAsync("dotnet", $"add \"{DALProjectName}/{DALProjectName}.csproj\" package Microsoft.Extensions.Configuration.Json", projectFolderPath);
+                }
 
                 string presentationPath = Path.Combine(projectFolderPath, presentationProjectName);
                 string bllPath = Path.Combine(projectFolderPath, BLLProjectName);
