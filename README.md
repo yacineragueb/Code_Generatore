@@ -51,6 +51,15 @@ The side-by-side preview helps verify the output and builds confidence before co
 
 ---
 
+## 📸 Screenshots
+
+![Code_Generatore_Login_Window](./images/Login_Window.png)
+![Code_Generatore_Main_Window](./images/Main_Window.png)
+![Code_Generatore_Main_Window](./images/Main_Window_2.png)
+![Code_Generatore_Example](./images/Example.png)
+
+---
+
 ## 🛠️ Technologies Used
 
 | Layer | Technology |
@@ -89,10 +98,6 @@ This tool is useful for:
 6. Preview the generated code.
 7. Click **Generate**.
 8. Open the generated solution in Visual Studio and start developing.
-
----
-
-## 📸 Screenshots
 
 ---
 
