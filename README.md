@@ -60,6 +60,12 @@ The side-by-side preview helps verify the output and builds confidence before co
 
 ---
 
+## Links
+
+Live video: [Click Here](https://www.linkedin.com/feed/update/urn:li:ugcPost:7472396058648829952/)
+
+---
+
 ## 🛠️ Technologies Used
 
 | Layer | Technology |
