@@ -35,14 +35,14 @@ namespace Code_Generatore.BusinessLayer
             return new ConnectionSession(_server, username, connectionString, isConnected: true);
         }
 
-        public List<string> GetAllDatabases(ConnectionSession session)
+        public async Task<List<string>> GetAllDatabasesAsync(ConnectionSession session)
         {
-            return DatabaseServiceData.GetDatabases(session.ConnectionString);
+            return await DatabaseServiceData.GetDatabasesAsync(session.ConnectionString);
         }
     
-        public List<string> GetAllTables(ConnectionSession session, string databaseName)
+        public async Task<List<string>> GetAllTablesAsync(ConnectionSession session, string databaseName, CancellationToken ct)
         {
-            return DatabaseServiceData.GetAllTables(session.ConnectionString, databaseName);
+            return await DatabaseServiceData.GetAllTablesAsync(session.ConnectionString, databaseName, ct);
         }
     
         public List<ColumnInfo> GetTableColumns(ConnectionSession session, string databaseName, string tableName)

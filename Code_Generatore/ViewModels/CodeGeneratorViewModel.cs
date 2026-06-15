@@ -13,7 +13,7 @@ namespace Code_Generatore.ViewModels
     public class CodeGeneratorViewModel : INotifyPropertyChanged
     {
         private readonly ConnectionSession _session;
-        private DatabaseService _dbService;
+        private readonly DatabaseService _dbService;
         private string _selectedDatabase = string.Empty;
         private string _outputFolder = string.Empty;
         private string _projectName = string.Empty;
@@ -21,6 +21,7 @@ namespace Code_Generatore.ViewModels
         private bool _hasSelectedTable = false;
         private bool _isResetting = false;
         private CancellationTokenSource? _previewCts;
+        private CancellationTokenSource? _tablesCts;
         private ProjectGeneratore.enProjectType _selectedProjectType;
         private bool _isGenerating = false;
         private bool _bllSelected = true;
@@ -47,7 +48,7 @@ namespace Code_Generatore.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ConnectionSession Session => _session;
-        public List<string> DatabasesList { get; }
+        public ObservableCollection<string> DatabasesList { get; } = new ObservableCollection<string>();
         public ObservableCollection<TableItem> Tables { get; } = [];
 
         public string SelectedDatabase
@@ -60,10 +61,12 @@ namespace Code_Generatore.ViewModels
 
                 _selectedDatabase = value;
 
-                ResetCRUDOperationsCheckbox();
-                ResetCRUDOperationsfunctionNames();
+                ResetCRUDOperations();
 
-                LoadTables();
+                _tablesCts?.Cancel();
+                _tablesCts = new CancellationTokenSource();
+
+                _ = LoadTablesAsync(_tablesCts.Token); // fire-and-forget
 
                 OnPropertyChanged(nameof(SelectedDatabase));
                 OnPropertyChanged(nameof(SelectedDatabaseDisplay));
@@ -386,10 +389,21 @@ namespace Code_Generatore.ViewModels
         {
             _session = session;
             _dbService = new DatabaseService();
-            DatabasesList = _dbService.GetAllDatabases(_session); // I stop here, make this function Async
             BrowseCommand = new RelayCommand(Browse);
             CopyPreviewCommand = new RelayCommand(_ => Clipboard.SetText(PreviewCode));
             GenerateCommand = new AsyncRelayCommand(GenerateCodeAsync, _ => CanGenerate);
+        }
+
+        public async Task InitializeAsync()
+        {
+            List<string> databases = await _dbService.GetAllDatabasesAsync(_session);
+
+            DatabasesList.Clear();
+
+            foreach (var database in databases)
+            {
+                DatabasesList.Add(database);
+            }
         }
 
         private void RefreshPreview()
@@ -426,9 +440,7 @@ namespace Code_Generatore.ViewModels
 
             var preview = new StringBuilder();
 
-            preview.AppendLine("// ==============================");
-            preview.AppendLine("//   BUSINESS LAYER PREVIEW");
-            preview.AppendLine("// ==============================");
+            preview.AppendLine(PreviewGeneratedCodeHeader());
             preview.AppendLine();
 
             GenerationOptions options = BuildGenerationOptions();
@@ -436,6 +448,32 @@ namespace Code_Generatore.ViewModels
             preview.Append(generator.Generate(options));
 
             PreviewCode = preview.ToString();
+        }
+
+        private string PreviewGeneratedCodeHeader()
+        {
+            string header = @"/* =====================================================================
+ *  BUSINESS LAYER PREVIEW (AUTO-GENERATED CODE)
+ * =====================================================================
+ *
+ *  COPY AND USAGE:
+ *  Copy this code and paste it into your project.
+ *
+ *  PARTIAL CLASS NOTE:
+ *  The generated class uses the ""partial"" keyword, which allows you to
+ *  split the class definition across multiple files.
+ *
+ *  This means you can safely create a new file and place this generated
+ *  code inside it without affecting your existing custom code.
+ *
+ *  This is useful if you want to:
+ *  - Extend functionality without modifying generated code
+ *  - Preserve manual changes separately
+ *  - Avoid overwriting custom logic during regeneration
+ *
+ * ===================================================================== */";
+
+            return header;
         }
 
         private async Task GenerateCodeAsync(object? paramater)
@@ -488,41 +526,62 @@ namespace Code_Generatore.ViewModels
             }
         }
 
-        private void LoadTables()
+        private async Task LoadTablesAsync(CancellationToken ct)
         {
             Tables.Clear();
 
             if (IsEmpty(SelectedDatabase))
                 return;
-
-            List<string> tableNames =
-                _dbService.GetAllTables(_session, SelectedDatabase);
-
-            foreach (string tableName in tableNames)
+            try
             {
-                var table = new TableItem(tableName);
+                List<string> tableNames =
+                await _dbService.GetAllTablesAsync(_session, SelectedDatabase, ct);
 
-                table.PropertyChanged += (sender, e) =>
+                if (ct.IsCancellationRequested) return;
+
+                foreach (string tableName in tableNames)
                 {
-                    if (e.PropertyName == nameof(TableItem.IsSelected))
+                    var table = new TableItem(tableName);
+
+                    table.PropertyChanged += (sender, e) =>
                     {
-                        HasSelectedTable = Tables.Any(t => t.IsSelected);
-
-                        if (!HasSelectedTable)
+                        if (e.PropertyName == nameof(TableItem.IsSelected))
                         {
-                            ResetCRUDOperationsCheckbox();
+                            HasSelectedTable = Tables.Any(t => t.IsSelected);
+
+                            if (!HasSelectedTable)
+                            {
+                                ResetCRUDOperationsCheckbox();
+                            }
+
+                            ResetCRUDOperationsfunctionNames();
+
+                            OnPropertyChanged(nameof(AreAllTablesSelected));
+                            OnPropertyChanged(nameof(AreAllOperationsChecked));
+                            RefreshPreview();
                         }
+                    };
 
-                        ResetCRUDOperationsfunctionNames();
+                    Tables.Add(table);
+                }
 
-                        OnPropertyChanged(nameof(AreAllTablesSelected));
-                        OnPropertyChanged(nameof(AreAllOperationsChecked));
-                        RefreshPreview();
-                    }
-                };
+                OnPropertyChanged(nameof(CanSelectAllTables));
+                OnPropertyChanged(nameof(AreAllTablesSelected));
 
-                Tables.Add(table);
+            } catch (OperationCanceledException)
+            {
+                // Expected when user switches database — safely ignore
+            } catch (Exception ex) 
+            {
+                throw new Exception("Failed to load tables.\n" + ex);
             }
+            
+        }
+
+        private void ResetCRUDOperations()
+        {
+            ResetCRUDOperationsCheckbox();
+            ResetCRUDOperationsfunctionNames();
         }
 
         private void ResetCRUDOperationsCheckbox()

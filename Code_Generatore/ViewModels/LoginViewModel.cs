@@ -3,7 +3,6 @@ using Code_Generatore.BusinessLayer.Exceptions;
 using Code_Generatore.ViewModels.Commands;
 using Code_Generatore.Lib;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Code_Generatore.ViewModels
@@ -15,7 +14,6 @@ namespace Code_Generatore.ViewModels
         private bool _rememberMe;
         private string _errorMessage = string.Empty;
         private bool _hasError;
-        private readonly DatabaseService _dbService;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -85,8 +83,6 @@ namespace Code_Generatore.ViewModels
 
         public LoginViewModel()
         {
-            _dbService = new DatabaseService();
-
             LoginCommand = new AsyncRelayCommand(LoginAsync, _ => Utility.AreCredentialsProvided(Username, Password));
 
             LoadCredentials();
@@ -104,7 +100,9 @@ namespace Code_Generatore.ViewModels
 
             try
             {
-                ConnectionSession session = await _dbService.LoginAsync(Username, Password);
+                var dbService = new DatabaseService();
+
+                ConnectionSession session = await dbService.LoginAsync(Username, Password);
 
                 if (RememberMe)
                 {
@@ -123,11 +121,7 @@ namespace Code_Generatore.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "An unexpected error occurred.\n" + ex.Message,
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                throw new Exception($"An unexpected error occurred in LoginViewModel.LoginAsync.\n" + ex);
             }
         }
 

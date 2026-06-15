@@ -1,26 +1,25 @@
 ﻿using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace Code_Generatore.AccessDataLayer
 {
     public static class DatabaseServiceData
     {
-        public static List<string> GetDatabases(string connectionString)
+        public static async Task<List<string>> GetDatabasesAsync(string connectionString)
         {
             List<string> databases = new List<string>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
 
                 string query = @"SELECT name FROM sys.databases
                                  WHERE name NOT IN ('master', 'model', 'msdb', 'tempdb')
                                  ORDER BY name;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         databases.Add(reader.GetString(0));
                     }
@@ -47,14 +46,14 @@ namespace Code_Generatore.AccessDataLayer
             }
         }
     
-        public static List<string> GetAllTables(string connectionString, string databaseName)
+        public static async Task<List<string>> GetAllTablesAsync(string connectionString, string databaseName, CancellationToken ct = default)
         {
             List<string> tables = new List<string>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
-                conn.ChangeDatabase(databaseName);
+                await conn.OpenAsync(ct);
+                await conn.ChangeDatabaseAsync(databaseName, ct);
 
                 string query = @"SELECT TABLE_NAME
                                 FROM INFORMATION_SCHEMA.TABLES
@@ -65,9 +64,9 @@ namespace Code_Generatore.AccessDataLayer
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync(ct))
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync(ct))
                         {
                             tables.Add(reader.GetString(0));
                         }

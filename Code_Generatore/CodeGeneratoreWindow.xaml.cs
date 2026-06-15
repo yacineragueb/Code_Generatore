@@ -32,6 +32,13 @@ namespace Code_Generatore
             _viewModel = new CodeGeneratorViewModel(Session);
             this.DataContext = _viewModel;
             StartLiveClock();
+
+            Loaded += CodeGeneratoreWindow_Loaded;
+        }
+
+        private async void CodeGeneratoreWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.InitializeAsync();
         }
 
         private void UpdateClock()
