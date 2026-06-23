@@ -16,7 +16,13 @@ namespace Code_Generatore.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if((bool)value)
+            if (value is not bool boolValue)
+                throw new ArgumentException("Value must be a boolean.", nameof(value));
+
+            if (parameter == null)
+                throw new ArgumentNullException(nameof(parameter));
+
+            if (boolValue)
             {
                 return Enum.Parse(targetType, parameter.ToString());
             }
