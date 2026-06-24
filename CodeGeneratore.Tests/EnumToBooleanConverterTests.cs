@@ -1,7 +1,6 @@
 ﻿using Code_Generatore.BusinessLayer;
 using Code_Generatore.Converters;
 using System.Globalization;
-using System.Reflection;
 using System.Windows.Data;
 
 namespace CodeGeneratore.Tests;
