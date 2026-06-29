@@ -2,6 +2,8 @@
 
 A desktop application that automates the generation of boilerplate code for multi-layered .NET applications. The tool connects to a SQL Server database, analyzes tables, and generates Data Access Layer (DAL) and Business Logic Layer (BLL) code automatically, significantly reducing repetitive development work.
 
+![Code_Generator_v1](./images/code-generatore-v1.png)
+
 ---
 
 ## ✨ Features
